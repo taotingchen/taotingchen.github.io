@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#cdeef3">
+<title>Tao-Ting Chen · AI 研究者｜自動駕駛與高效推論</title>
+<meta name="description" content="AI 研究者，研究自動駕駛的視覺-語言-動作模型與即時推論。">
+<link rel="canonical" href="https://taotingchen.github.io/zh/">
+<link rel="alternate" hreflang="en" href="https://taotingchen.github.io/">
+<link rel="alternate" hreflang="zh-Hant" href="https://taotingchen.github.io/zh/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tao-Ting Chen · AI 研究者｜自動駕駛與高效推論">
+<meta property="og:description" content="AI 研究者，研究自動駕駛的視覺-語言-動作模型與即時推論。">
+<meta property="og:url" content="https://taotingchen.github.io/zh/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css?v=231b91a7">
+</head>
+<body>
+<a class="skip" href="#main">跳到主要內容</a>
+
+<header class="nav">
+  <a class="brand" href="../">Tao-Ting Chen</a>
+  <nav aria-label="Primary">
+    <a href="#work">作品</a>
+    <a href="#projects">專案</a>
+    <a href="#contact">聯絡</a>
+    <a class="lang" href="../" hreflang="en">EN</a>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <canvas id="water" aria-hidden="true"></canvas>
+    <div class="hero-copy">
+      <h1>Tao-Ting Chen</h1>
+      <p class="lede">我研究自動駕駛的視覺-語言-動作（VLA）模型，專注於即時推論。</p>
+      <p class="actions">
+        <a class="btn" href="#work">查看作品</a>
+      </p>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <h2>關於我</h2>
+    <div class="bio"><p>我是 AI 研究者，研究方向為自動駕駛、視覺-語言-動作模型與推論效率。</p><p>我也持續關注機器人、3D 重建與大型語言模型的研究。</p></div>
+    <p class="meta">PyTorch · VLA / VLM · CARLA · LoRA fine-tuning · torch.compile · Quantization · Diffusion models · Linux &amp; CUDA</p>
+  </section>
+
+  <section id="work" class="section">
+    <h2>精選作品</h2>
+    <article class="featured">
+      <h3>SimLingo × 歐洲卡車模擬 2</h3>
+      <p>以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 57 ms。</p>
+      <figure class="chart">
+        <figcaption>各項最佳化後的每幀延遲</figcaption>
+        <ol class="bars"><li class="bar"><span class="bar-label">原始版本</span><span class="bar-track"><span class="bar-fill" style="--w:100.0%"></span></span><span class="bar-value">691 ms</span></li><li class="bar"><span class="bar-label">只解碼駕駛輸出</span><span class="bar-track"><span class="bar-fill" style="--w:44.2%"></span></span><span class="bar-value">95.7 ms</span></li><li class="bar"><span class="bar-label">SDPA 注意力</span><span class="bar-track"><span class="bar-fill" style="--w:35.9%"></span></span><span class="bar-value">71.4 ms</span></li><li class="bar"><span class="bar-label">合併 LoRA</span><span class="bar-track"><span class="bar-fill" style="--w:32.1%"></span></span><span class="bar-value">62.3 ms</span></li><li class="bar is-final"><span class="bar-label">torch.compile</span><span class="bar-track"><span class="bar-fill" style="--w:29.5%"></span></span><span class="bar-value">56.9 ms</span></li></ol>
+      </figure>
+      <p class="meta">報告也記錄了沒有幫助的方法：INT8 與 FP8 量化、TensorRT，以及雙 GPU 配置。</p>
+    </article>
+  </section>
+
+  <section id="projects" class="section">
+    <h2>Side projects</h2>
+    <ul class="list">
+      <li class="item">
+        <h3>LLM Wiki</h3>
+        <p>由 LLM 代理維護的個人研究知識庫，涵蓋自動駕駛、機器人與 3D 重建。</p>
+        <p class="meta">Agents · Obsidian · 2026</p>
+      </li>
+    </ul>
+  </section>
+
+  <section id="contact" class="section">
+    <h2>聯絡</h2>
+    <p>歡迎研究合作與 AI／ML 工程職缺機會。</p>
+    <ul class="links"><li><a class="" href="https://github.com/taotingchen" target="_blank" rel="noopener">GitHub</a></li><li><a class="" href="https://huggingface.co/tao904" target="_blank" rel="noopener">Hugging Face</a></li></ul>
+  </section>
+</main>
+
+<footer class="footer">© <span id="year">2026</span> Tao-Ting Chen</footer>
+<script src="../assets/main.js?v=231b91a7" defer></script>
+</body>
+</html>

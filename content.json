@@ -1,0 +1,517 @@
+{
+  "_readme": "Every text field is {en, zh}. Items with \"todo\": true are placeholders: they render with a dashed outline and build.py lists them. Run `python3 build.py` after editing.",
+  "site": {
+    "url": "https://taotingchen.github.io",
+    "name": {
+      "en": "Tao-Ting Chen",
+      "zh": "Tao-Ting Chen"
+    },
+    "mark": "TTC",
+    "title": {
+      "en": "Tao-Ting Chen · AI researcher, autonomous driving and efficient inference",
+      "zh": "Tao-Ting Chen · AI 研究者｜自動駕駛與高效推論"
+    },
+    "description": {
+      "en": "AI researcher working on vision-language-action models for autonomous driving and real-time inference.",
+      "zh": "AI 研究者，研究自動駕駛的視覺-語言-動作模型與即時推論。"
+    }
+  },
+  "hero": {
+    "eyebrow": {
+      "en": "AI researcher · Taiwan",
+      "zh": "AI 研究者 · 台灣"
+    },
+    "headline": {
+      "en": "Tao-Ting Chen",
+      "zh": "Tao-Ting Chen"
+    },
+    "lede": {
+      "en": "I research vision-language-action models for autonomous driving, with a focus on real-time inference.",
+      "zh": "我研究自動駕駛的視覺-語言-動作（VLA）模型，專注於即時推論。"
+    },
+    "cta_work": {
+      "en": "View work",
+      "zh": "查看作品"
+    },
+    "cta_cv": {
+      "en": "Download CV",
+      "zh": "下載履歷"
+    },
+    "sim_label": {
+      "en": "Model latency",
+      "zh": "模型延遲"
+    },
+    "sim_before": {
+      "en": "Before",
+      "zh": "最佳化前"
+    },
+    "sim_after": {
+      "en": "After",
+      "zh": "最佳化後"
+    },
+    "sim_hint": {
+      "en": "Simplified simulation: at higher latency the model reacts to an older position of the truck.",
+      "zh": "簡化模擬：延遲越高，模型依據的卡車位置越舊。"
+    },
+    "sim_ghost": {
+      "en": "position the model sees",
+      "zh": "模型看到的位置"
+    },
+    "sim_ok": {
+      "en": "IN LANE",
+      "zh": "車道內"
+    },
+    "sim_off": {
+      "en": "OFF ROAD",
+      "zh": "衝出車道"
+    },
+    "sim_departures": {
+      "en": "LANE DEPARTURES",
+      "zh": "偏離車道次數"
+    }
+  },
+  "stats": [
+    {
+      "value": "12.1×",
+      "label": {
+        "en": "faster inference on a VLA driving model",
+        "zh": "VLA 駕駛模型推論加速"
+      }
+    },
+    {
+      "value": "57 ms",
+      "label": {
+        "en": "per frame on one RTX 5060 Ti",
+        "zh": "單張 RTX 5060 Ti 每幀延遲"
+      }
+    },
+    {
+      "value": "23",
+      "label": {
+        "en": "optimization experiments documented",
+        "zh": "項最佳化實驗完整記錄"
+      }
+    }
+  ],
+  "work": {
+    "heading": {
+      "en": "Selected work",
+      "zh": "精選作品"
+    },
+    "featured": {
+      "tag": {
+        "en": "Autonomous driving · VLA",
+        "zh": "自動駕駛 · VLA"
+      },
+      "title": {
+        "en": "SimLingo × Euro Truck Simulator 2",
+        "zh": "SimLingo × 歐洲卡車模擬 2"
+      },
+      "body": {
+        "en": "A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 57 ms per frame on a single consumer GPU.",
+        "zh": "以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 57 ms。"
+      },
+      "chart_title": {
+        "en": "Latency per frame after each optimization",
+        "zh": "各項最佳化後的每幀延遲"
+      },
+      "steps": [
+        {
+          "ms": 691,
+          "label": {
+            "en": "Baseline",
+            "zh": "原始版本"
+          }
+        },
+        {
+          "ms": 95.7,
+          "label": {
+            "en": "Driving-only decode",
+            "zh": "只解碼駕駛輸出"
+          }
+        },
+        {
+          "ms": 71.4,
+          "label": {
+            "en": "SDPA attention",
+            "zh": "SDPA 注意力"
+          }
+        },
+        {
+          "ms": 62.3,
+          "label": {
+            "en": "Merge LoRA",
+            "zh": "合併 LoRA"
+          }
+        },
+        {
+          "ms": 56.9,
+          "label": {
+            "en": "torch.compile",
+            "zh": "torch.compile"
+          }
+        }
+      ],
+      "note": {
+        "en": "The report also covers the approaches that did not help: INT8 and FP8 quantization, TensorRT, and a dual-GPU setup.",
+        "zh": "報告也記錄了沒有幫助的方法：INT8 與 FP8 量化、TensorRT，以及雙 GPU 配置。"
+      },
+      "link": "#",
+      "link_label": {
+        "en": "Read the report",
+        "zh": "閱讀報告"
+      },
+      "stack": [
+        "PyTorch",
+        "InternVL2",
+        "Qwen2",
+        "LoRA",
+        "Triton",
+        "CARLA"
+      ]
+    }
+  },
+  "research": {
+    "heading": {
+      "en": "Publications",
+      "zh": "論文發表"
+    },
+    "items": [
+      {
+        "title": {
+          "en": "Paper title",
+          "zh": "論文標題"
+        },
+        "authors": "Tao-Ting Chen, Co-author, Advisor",
+        "venue": {
+          "en": "Venue or journal",
+          "zh": "會議或期刊名稱"
+        },
+        "status": {
+          "en": "Under review",
+          "zh": "審查中"
+        },
+        "year": "20XX",
+        "link": "#",
+        "todo": true
+      },
+      {
+        "title": {
+          "en": "Reducing inference latency of a VLA driving model on a consumer GPU",
+          "zh": "在消費級 GPU 上降低 VLA 駕駛模型的推論延遲"
+        },
+        "authors": "Tao-Ting Chen",
+        "venue": {
+          "en": "Technical report",
+          "zh": "技術報告"
+        },
+        "status": {
+          "en": "In preparation",
+          "zh": "撰寫中"
+        },
+        "year": "2026",
+        "link": "#",
+        "todo": true
+      }
+    ]
+  },
+  "about": {
+    "heading": {
+      "en": "About",
+      "zh": "關於我"
+    },
+    "bio": [
+      {
+        "en": "I am an AI researcher working on autonomous driving, vision-language-action models and inference efficiency.",
+        "zh": "我是 AI 研究者，研究方向為自動駕駛、視覺-語言-動作模型與推論效率。"
+      },
+      {
+        "en": "I also follow research in robotics, 3D reconstruction and large language models.",
+        "zh": "我也持續關注機器人、3D 重建與大型語言模型的研究。"
+      }
+    ],
+    "skills_heading": {
+      "en": "Skills",
+      "zh": "技能"
+    },
+    "skills": [
+      "PyTorch",
+      "VLA / VLM",
+      "CARLA",
+      "LoRA fine-tuning",
+      "torch.compile",
+      "Quantization",
+      "Diffusion models",
+      "Linux & CUDA"
+    ]
+  },
+  "contact": {
+    "heading": {
+      "en": "Contact",
+      "zh": "聯絡"
+    },
+    "body": {
+      "en": "Open to research collaborations and AI/ML engineering roles.",
+      "zh": "歡迎研究合作與 AI／ML 工程職缺機會。"
+    },
+    "email": "you@example.com",
+    "links": [
+      {
+        "label": "GitHub",
+        "url": "https://github.com/taotingchen"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/YOUR-HANDLE",
+        "todo": true
+      },
+      {
+        "label": "Google Scholar",
+        "url": "#",
+        "todo": true
+      },
+      {
+        "label": "arXiv",
+        "url": "#",
+        "todo": true
+      },
+      {
+        "label": "ORCID",
+        "url": "#",
+        "todo": true
+      },
+      {
+        "label": "Hugging Face",
+        "url": "https://huggingface.co/tao904"
+      },
+      {
+        "label": "X",
+        "url": "#",
+        "todo": true
+      },
+      {
+        "label": "Cake",
+        "url": "#",
+        "todo": true
+      }
+    ]
+  },
+  "ui": {
+    "nav_work": {
+      "en": "Work",
+      "zh": "作品"
+    },
+    "nav_research": {
+      "en": "Publications",
+      "zh": "論文"
+    },
+    "nav_about": {
+      "en": "About",
+      "zh": "關於"
+    },
+    "nav_contact": {
+      "en": "Contact",
+      "zh": "聯絡"
+    },
+    "theme": {
+      "en": "Toggle theme",
+      "zh": "切換主題"
+    },
+    "skip": {
+      "en": "Skip to content",
+      "zh": "跳到主要內容"
+    },
+    "nav_side": {
+      "en": "Projects",
+      "zh": "專案"
+    }
+  },
+  "side": {
+    "heading": {
+      "en": "Side projects",
+      "zh": "Side projects"
+    },
+    "_how_to_add": "Add a new object at the top of items: title, body (one sentence), stack, year, link. Newest first.",
+    "items": [
+      {
+        "tag": {
+          "en": "Efficient training",
+          "zh": "高效訓練"
+        },
+        "title": {
+          "en": "Parameter Golf",
+          "zh": "Parameter Golf"
+        },
+        "body": {
+          "en": "Training language models under a 16 MB size limit, using an automated loop that proposes changes to the training script and keeps those that improve the result.",
+          "zh": "在 16 MB 的大小限制下訓練語言模型，以自動化流程提出訓練程式的修改，並保留有改善的版本。"
+        },
+        "stack": [
+          "Quantization",
+          "Muon",
+          "Agents"
+        ],
+        "link": "#",
+        "todo": true,
+        "year": "2026"
+      },
+      {
+        "tag": {
+          "en": "Generative video",
+          "zh": "影片生成"
+        },
+        "title": {
+          "en": "StreamLens",
+          "zh": "StreamLens"
+        },
+        "body": {
+          "en": "Placeholder: one or two sentences on what StreamLens does and the number you are proudest of.",
+          "zh": "佔位內容：用一兩句話說明 StreamLens 做什麼，以及你最自豪的一個數字。"
+        },
+        "stack": [
+          "Diffusion",
+          "Video",
+          "Real-time"
+        ],
+        "link": "#",
+        "todo": true,
+        "year": "2026"
+      },
+      {
+        "tag": {
+          "en": "Knowledge tooling",
+          "zh": "知識工具"
+        },
+        "title": {
+          "en": "LLM Wiki",
+          "zh": "LLM Wiki"
+        },
+        "body": {
+          "en": "A personal research knowledge base maintained by an LLM agent, covering autonomous driving, robotics and 3D reconstruction.",
+          "zh": "由 LLM 代理維護的個人研究知識庫，涵蓋自動駕駛、機器人與 3D 重建。"
+        },
+        "stack": [
+          "Agents",
+          "Obsidian"
+        ],
+        "link": "#",
+        "year": "2026"
+      },
+      {
+        "tag": {
+          "en": "Diffusion from scratch",
+          "zh": "從零實作擴散模型"
+        },
+        "title": {
+          "en": "DDPM & DDIM",
+          "zh": "DDPM 與 DDIM"
+        },
+        "body": {
+          "en": "Placeholder: implementations of DDPM and DDIM sampling with FID evaluation. Add your best FID and what you learned.",
+          "zh": "佔位內容：DDPM 與 DDIM 取樣實作及 FID 評估。請補上最佳 FID 與心得。"
+        },
+        "stack": [
+          "PyTorch",
+          "FID"
+        ],
+        "link": "#",
+        "todo": true,
+        "year": "2026"
+      }
+    ]
+  },
+  "awards": {
+    "heading": {
+      "en": "Competitions and awards",
+      "zh": "競賽與獎項"
+    },
+    "items": [
+      {
+        "title": {
+          "en": "Competition name",
+          "zh": "競賽名稱"
+        },
+        "result": {
+          "en": "Rank, e.g. 2nd place of 120 teams",
+          "zh": "名次，例如 第 2 名／120 隊"
+        },
+        "detail": {
+          "en": "One sentence on what you built.",
+          "zh": "一句話說明做了什麼。"
+        },
+        "year": "20XX",
+        "link": "#",
+        "todo": true
+      },
+      {
+        "title": {
+          "en": "Competition name",
+          "zh": "競賽名稱"
+        },
+        "result": {
+          "en": "Rank",
+          "zh": "名次"
+        },
+        "detail": {
+          "en": "One sentence on what you built.",
+          "zh": "一句話說明做了什麼。"
+        },
+        "year": "20XX",
+        "link": "#",
+        "todo": true
+      }
+    ]
+  },
+  "experience": {
+    "heading": {
+      "en": "Experience",
+      "zh": "經歷"
+    },
+    "items": [
+      {
+        "what": {
+          "en": "Role, Company or Lab",
+          "zh": "職稱，公司或實驗室"
+        },
+        "detail": {
+          "en": "One line with a measurable result.",
+          "zh": "一句話，帶一個可量化的成果。"
+        },
+        "when": "20XX – 20XX",
+        "todo": true
+      }
+    ]
+  },
+  "education": {
+    "heading": {
+      "en": "Education",
+      "zh": "學歷"
+    },
+    "items": [
+      {
+        "what": {
+          "en": "M.S., Department, University",
+          "zh": "碩士，系所，學校"
+        },
+        "detail": {
+          "en": "Lab, advisor, research topic.",
+          "zh": "實驗室、指導教授、研究主題。"
+        },
+        "when": "20XX – now",
+        "todo": true
+      },
+      {
+        "what": {
+          "en": "B.S., Department, University",
+          "zh": "學士，系所，學校"
+        },
+        "detail": {
+          "en": "Major, honors.",
+          "zh": "主修、榮譽。"
+        },
+        "when": "20XX – 20XX",
+        "todo": true
+      }
+    ]
+  }
+}
