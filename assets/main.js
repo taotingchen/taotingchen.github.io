@@ -55,10 +55,21 @@
 
   function resize() {
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = canvas.clientWidth; H = canvas.clientHeight;
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    if (w === W && h === H) return;
+    var sx = W ? w / W : 1, sy = H ? h / H : 1, first = !schools.length;
+    W = w; H = h;
     canvas.width = W * dpr; canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    makeLife();
+    if (first) { makeLife(); return; }
+    // Keep everything where it is and only rescale positions. Phones fire a
+    // resize whenever the address bar shows or hides during scrolling, and the
+    // animals must not jump back to their starting places when that happens.
+    schools.forEach(function (sc) {
+      sc.ax *= sx; sc.ay *= sy;
+      sc.fish.forEach(function (f) { f.x *= sx; f.y *= sy; });
+    });
+    turtle.x *= sx; turtle.y *= sy;
   }
 
   function step(dt) {
