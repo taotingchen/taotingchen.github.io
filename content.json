@@ -168,7 +168,8 @@
         "LoRA",
         "Triton",
         "CARLA"
-      ]
+      ],
+      "todo": true
     }
   },
   "research": {
@@ -395,7 +396,8 @@
           "Obsidian"
         ],
         "link": "#",
-        "year": "2026"
+        "year": "2026",
+        "todo": true
       },
       {
         "tag": {

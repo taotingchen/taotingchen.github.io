@@ -25,8 +25,6 @@
 <header class="nav">
   <a class="brand" href="./">Tao-Ting Chen</a>
   <nav aria-label="Primary">
-    <a href="#work">Work</a>
-    <a href="#projects">Projects</a>
     <a href="#contact">Contact</a>
     <a class="lang" href="zh/" hreflang="zh-Hant">中文</a>
   </nav>
@@ -38,9 +36,7 @@
     <div class="hero-copy">
       <h1>Tao-Ting Chen</h1>
       <p class="lede">I research vision-language-action models for autonomous driving, with a focus on real-time inference.</p>
-      <p class="actions">
-        <a class="btn" href="#work">View work</a>
-      </p>
+
     </div>
   </section>
 
@@ -48,30 +44,6 @@
     <h2>About</h2>
     <div class="bio"><p>I am an AI researcher working on autonomous driving, vision-language-action models and inference efficiency.</p><p>I also follow research in robotics, 3D reconstruction and large language models.</p></div>
     <p class="meta">PyTorch · VLA / VLM · CARLA · LoRA fine-tuning · torch.compile · Quantization · Diffusion models · Linux &amp; CUDA</p>
-  </section>
-
-  <section id="work" class="section">
-    <h2>Selected work</h2>
-    <article class="featured">
-      <h3>SimLingo × Euro Truck Simulator 2</h3>
-      <p>A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 57 ms per frame on a single consumer GPU.</p>
-      <figure class="chart">
-        <figcaption>Latency per frame after each optimization</figcaption>
-        <ol class="bars"><li class="bar"><span class="bar-label">Baseline</span><span class="bar-track"><span class="bar-fill" style="--w:100.0%"></span></span><span class="bar-value">691 ms</span></li><li class="bar"><span class="bar-label">Driving-only decode</span><span class="bar-track"><span class="bar-fill" style="--w:44.2%"></span></span><span class="bar-value">95.7 ms</span></li><li class="bar"><span class="bar-label">SDPA attention</span><span class="bar-track"><span class="bar-fill" style="--w:35.9%"></span></span><span class="bar-value">71.4 ms</span></li><li class="bar"><span class="bar-label">Merge LoRA</span><span class="bar-track"><span class="bar-fill" style="--w:32.1%"></span></span><span class="bar-value">62.3 ms</span></li><li class="bar is-final"><span class="bar-label">torch.compile</span><span class="bar-track"><span class="bar-fill" style="--w:29.5%"></span></span><span class="bar-value">56.9 ms</span></li></ol>
-      </figure>
-      <p class="meta">The report also covers the approaches that did not help: INT8 and FP8 quantization, TensorRT, and a dual-GPU setup.</p>
-    </article>
-  </section>
-
-  <section id="projects" class="section">
-    <h2>Side projects</h2>
-    <ul class="list">
-      <li class="item">
-        <h3>LLM Wiki</h3>
-        <p>A personal research knowledge base maintained by an LLM agent, covering autonomous driving, robotics and 3D reconstruction.</p>
-        <p class="meta">Agents · Obsidian · 2026</p>
-      </li>
-    </ul>
   </section>
 
   <section id="contact" class="section">

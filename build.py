@@ -93,8 +93,8 @@ def render(lang):
                  f'<span class="bar-track"><span class="bar-fill" style="--w:{pct:.1f}%"></span></span>'
                  f'<span class="bar-value">{s["ms"]:g} ms</span></li>')
     more = f'\n      <p>{linked(t(f["link_label"]) + " →", f["link"]).replace("<a ", "<a class=more ", 1)}</p>' if real(f.get("link")) else ""
-    featured = f"""
-    <article class="featured">
+    featured = "" if f.get("todo") and not DRAFTS else f"""
+    <article class="featured{todo(f)}">
       <h3>{linked(t(f["title"]), f.get("link"))}</h3>
       <p>{t(f["body"])}</p>
       <figure class="chart">
@@ -144,9 +144,11 @@ def render(lang):
     bio = "".join(f"<p>{t(p)}</p>" for p in about["bio"])
     cv = f'\n        <a href="{base}assets/cv.pdf">{t(hero["cta_cv"])}</a>' if (ROOT / "assets/cv.pdf").exists() else ""
     og = f'\n<meta property="og:image" content="{site}/assets/og.png">\n<meta name="twitter:card" content="summary_large_image">' if (ROOT / "assets/og.png").exists() else ""
+    work_btn = f'\n        <a class="btn" href="#work">{t(hero["cta_work"])}</a>' if featured else ""
+    actions = f'      <p class="actions">{work_btn}{cv}\n      </p>' if work_btn or cv else ""
     canonical = f'{site}/{L["dir"] + "/" if L["dir"] else ""}'
 
-    nav = [("work", ui["nav_work"], True), ("projects", ui["nav_side"], projects),
+    nav = [("work", ui["nav_work"], featured), ("projects", ui["nav_side"], projects),
            ("research", ui["nav_research"], pubs), ("contact", ui["nav_contact"], True)]
     nav_html = "".join(f'\n    <a href="#{sid}">{t(label)}</a>' for sid, label, shown in nav if shown)
 
@@ -201,9 +203,7 @@ def render(lang):
     <div class="hero-copy">
       <h1>{name}</h1>
       <p class="lede">{t(hero["lede"])}</p>
-      <p class="actions">
-        <a class="btn" href="#work">{t(hero["cta_work"])}</a>{cv}
-      </p>
+{actions}
     </div>
   </section>
 {body}</main>
