@@ -130,17 +130,42 @@
     ctx.fill(); ctx.restore();
   }
 
+  // Sea turtle from above: long front flippers that sweep like wings, small
+  // rear paddles, a teardrop shell wider at the shoulders.
   function drawTurtle(t, shadow) {
-    var flap = Math.sin(time * 1.8) * 0.4;
+    var flap = Math.sin(time * 1.6), skin = shadow ? SHADOW : "#8ccba4";
     ctx.save(); ctx.translate(t.x + (shadow ? 9 : 0), t.y + (shadow ? 14 : 0)); ctx.rotate(Math.atan2(t.vy, t.vx) + Math.PI / 2);
-    ctx.fillStyle = shadow ? SHADOW : "#8ccba4";
-    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (s) {
-      ctx.save(); ctx.translate(s[0] * 13, s[1] * (s[1] < 0 ? 10 : 14)); ctx.rotate(s[0] * (s[1] < 0 ? 0.9 + flap : 2.3 - flap * 0.5));
-      ctx.beginPath(); ctx.ellipse(0, -8, s[1] < 0 ? 5 : 4, s[1] < 0 ? 13 : 8, 0, 0, 6.3); ctx.fill(); ctx.restore();
+    ctx.scale(1.15, 1.15);
+    ctx.fillStyle = skin;
+    [-1, 1].forEach(function (side) {
+      // front flipper
+      ctx.save(); ctx.translate(side * 11, -11); ctx.scale(side, 1); ctx.rotate(0.1 + flap * 0.42);
+      ctx.beginPath(); ctx.moveTo(-2, -4); ctx.quadraticCurveTo(17, -13, 31, 5); ctx.quadraticCurveTo(15, 1, -1, 6); ctx.closePath(); ctx.fill();
+      ctx.restore();
+      // rear paddle
+      ctx.save(); ctx.translate(side * 9, 17); ctx.rotate(side * (-0.55 - flap * 0.12));
+      ctx.beginPath(); ctx.ellipse(0, 5, 3.6, 7.5, 0, 0, 6.3); ctx.fill();
+      ctx.restore();
     });
-    ctx.beginPath(); ctx.ellipse(0, -24, 6, 7, 0, 0, 6.3); ctx.fill();
-    ctx.fillStyle = shadow ? SHADOW : "#64b389";
-    ctx.beginPath(); ctx.ellipse(0, 0, 16, 20, 0, 0, 6.3); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0, -25, 5.2, 7, 0, 0, 6.3); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-2.5, 20); ctx.lineTo(0, 27); ctx.lineTo(2.5, 20); ctx.fill();
+    // shell
+    ctx.fillStyle = shadow ? SHADOW : "#5fae86";
+    ctx.beginPath(); ctx.moveTo(0, -20);
+    ctx.bezierCurveTo(13, -20, 19, -5, 13, 9); ctx.quadraticCurveTo(7, 20, 0, 23);
+    ctx.quadraticCurveTo(-7, 20, -13, 9); ctx.bezierCurveTo(-19, -5, -13, -20, 0, -20);
+    ctx.fill();
+    if (!shadow) {
+      // scutes: a row of plates down the middle, ribs out to the rim
+      ctx.strokeStyle = "rgba(235,250,240,0.42)"; ctx.lineWidth = 1; ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(0, -15); ctx.lineTo(5, -10); ctx.lineTo(5, 9); ctx.lineTo(0, 16); ctx.lineTo(-5, 9); ctx.lineTo(-5, -10); ctx.closePath();
+      [-4, 3].forEach(function (y) { ctx.moveTo(-5, y); ctx.lineTo(5, y); });
+      [-1, 1].forEach(function (side) {
+        [[-10, -15], [-4, -5], [3, 4], [9, 12]].forEach(function (r) { ctx.moveTo(side * 5, r[0]); ctx.lineTo(side * (r[0] < 0 ? 13 : 12 - r[0] * 0.35), r[1]); });
+      });
+      ctx.stroke();
+    }
     ctx.restore();
   }
 
