@@ -58,8 +58,8 @@
   function summon() {
     if (giant || reduce || !W) return;
     seen = true;
-    var len = Math.max(W, H) * 0.85;
-    giant = { len: len, x: W + len * 0.6, y: H * 0.26, ang: Math.PI - 0.1, speed: (W + len * 1.3) / 22 };
+    var len = Math.min(Math.max(W, H) * 0.62, H * 0.95);
+    giant = { len: len, x: W + len * 0.6, y: H * 0.36, ang: Math.PI - 0.1, speed: (W + len * 1.3) / 22 };
   }
 
   function resize() {
@@ -89,7 +89,7 @@
     if (giant) {
       giant.x += Math.cos(giant.ang) * giant.speed * dt; giant.y += Math.sin(giant.ang) * giant.speed * dt;
       if (giant.x < -giant.len * 0.7) giant = null;
-      else scare = [0.38, 0.12, -0.14].map(function (u) {
+      else scare = [0.28, 0.04, -0.2].map(function (u) {
         return [giant.x + Math.cos(giant.ang) * giant.len * u, giant.y + Math.sin(giant.ang) * giant.len * u];
       });
     }
@@ -106,7 +106,7 @@
           if (m < 130) { var push = (1 - m / 130) * 900; ax += dx / m * push; ay += dy / m * push; }
         }
         if (scare) {
-          var R = giant.len * 0.17;
+          var R = giant.len * 0.3;
           scare.forEach(function (p) {
             var ex = f.x - p[0], ey = f.y - p[1], d = Math.sqrt(ex * ex + ey * ey) || 1;
             if (d < R) { var pu = (1 - d / R) * 700; ax += ex / d * pu; ay += ey / d * pu; }
@@ -179,14 +179,14 @@
     ctx.closePath();
   }
 
-  // Seen from above: a broad, heavy whale with wide paddle fins and a big tail.
+  // Seen from above: a short, fat, big-headed fish with wide paddle fins.
   function drawGiant(g) {
     var L = g.len, N = 64, i, s, top = [], bot = [];
     var flap = Math.sin(time * 0.9), beat = 0.78 + 0.22 * Math.sin(time * 1.1 + 1);
     function X(s) { return (0.5 - s) * L; }
     function half(s) {
-      var p = s < 0.3 ? Math.pow(1 - Math.pow(1 - s / 0.3, 2), 0.4) : 0.13 + 0.87 * Math.pow(1 - (s - 0.3) / 0.7, 1.3);
-      return p * L * 0.125;
+      var p = s < 0.36 ? Math.pow(1 - Math.pow(1 - s / 0.36, 2), 0.45) : 0.1 + 0.9 * Math.pow(1 - (s - 0.36) / 0.64, 1.1);
+      return p * L * 0.235;
     }
     function sway(s) { return Math.sin(time * 1.1 - s * 3) * L * 0.012 * s * s; }
     function edge(s, side, out) { return [X(s), sway(s) + side * (half(s) * (out ? 1 : 0.6) + (out || 0) * L)]; }
@@ -203,15 +203,15 @@
     poly(top.concat(bot.reverse()));
     // Fins: wide rounded paddles held out to the sides, slowly rising and falling
     [-1, 1].forEach(function (side) {
-      var reach = 0.2 + 0.03 * flap, a1 = edge(0.47, side, reach), a2 = edge(0.6, side, reach * 0.7);
-      poly(curve(edge(0.2, side), edge(0.27, side, reach * 1.05), a1).concat(
-           curve(a1, edge(0.6, side, reach * 1.02), a2), curve(a2, edge(0.52, side, 0.05), edge(0.44, side))));
+      var reach = 0.21 + 0.03 * flap, a1 = edge(0.5, side, reach), a2 = edge(0.72, side, reach * 0.78);
+      poly(curve(edge(0.28, side), edge(0.32, side, reach * 1.05), a1).concat(
+           curve(a1, edge(0.7, side, reach * 1.08), a2), curve(a2, edge(0.68, side, 0.03), edge(0.56, side))));
     });
     // Tail: wide and notched; it shortens and lengthens as it beats up and down
     var ty = sway(1), x1 = X(1), d = L * beat;
-    var up = [x1 - 0.085 * d, ty - L * 0.15], notch = [x1 - 0.03 * d, ty], down = [x1 - 0.085 * d, ty + L * 0.15];
-    poly(curve(edge(0.93, -1), [x1 + 0.02 * L, ty - L * 0.11], up).concat(curve(up, [x1 - 0.045 * d, ty - L * 0.05], notch),
-         curve(notch, [x1 - 0.045 * d, ty + L * 0.05], down), curve(down, [x1 + 0.02 * L, ty + L * 0.11], edge(0.93, 1))));
+    var up = [x1 - 0.12 * d, ty - L * 0.2], notch = [x1 - 0.04 * d, ty], down = [x1 - 0.12 * d, ty + L * 0.2];
+    poly(curve(edge(0.9, -1), [x1 + 0.03 * L, ty - L * 0.15], up).concat(curve(up, [x1 - 0.06 * d, ty - L * 0.07], notch),
+         curve(notch, [x1 - 0.06 * d, ty + L * 0.07], down), curve(down, [x1 + 0.03 * L, ty + L * 0.15], edge(0.9, 1))));
     ctx.fill(); ctx.restore();
   }
 
