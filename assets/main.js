@@ -179,15 +179,14 @@
     ctx.closePath();
   }
 
-  // Seen from above: a whale with long wing-like flippers and a broad tail,
-  // somewhere between a humpback and the great fish Kun.
+  // Seen from above: a broad, heavy whale with wide paddle fins and a big tail.
   function drawGiant(g) {
     var L = g.len, N = 64, i, s, top = [], bot = [];
     var flap = Math.sin(time * 0.9), beat = 0.78 + 0.22 * Math.sin(time * 1.1 + 1);
     function X(s) { return (0.5 - s) * L; }
     function half(s) {
-      var p = s < 0.3 ? Math.sqrt(1 - Math.pow(1 - s / 0.3, 2)) : 0.13 + 0.87 * Math.pow(1 - (s - 0.3) / 0.7, 1.45);
-      return p * L * 0.092;
+      var p = s < 0.3 ? Math.pow(1 - Math.pow(1 - s / 0.3, 2), 0.4) : 0.13 + 0.87 * Math.pow(1 - (s - 0.3) / 0.7, 1.3);
+      return p * L * 0.125;
     }
     function sway(s) { return Math.sin(time * 1.1 - s * 3) * L * 0.012 * s * s; }
     function edge(s, side, out) { return [X(s), sway(s) + side * (half(s) * (out ? 1 : 0.6) + (out || 0) * L)]; }
@@ -202,10 +201,11 @@
     ctx.fillStyle = "rgba(23,63,77,0.13)";
     ctx.beginPath();
     poly(top.concat(bot.reverse()));
-    // Flippers: long, swept back, slowly rising and falling
+    // Fins: wide rounded paddles held out to the sides, slowly rising and falling
     [-1, 1].forEach(function (side) {
-      var reach = 0.2 + 0.035 * flap, tip = edge(0.6 - 0.03 * flap, side, reach);
-      poly(curve(edge(0.25, side), edge(0.33, side, reach * 0.95), tip).concat(curve(tip, edge(0.47, side, reach * 0.3), edge(0.36, side))));
+      var reach = 0.2 + 0.03 * flap, a1 = edge(0.47, side, reach), a2 = edge(0.6, side, reach * 0.7);
+      poly(curve(edge(0.2, side), edge(0.27, side, reach * 1.05), a1).concat(
+           curve(a1, edge(0.6, side, reach * 1.02), a2), curve(a2, edge(0.52, side, 0.05), edge(0.44, side))));
     });
     // Tail: wide and notched; it shortens and lengthens as it beats up and down
     var ty = sway(1), x1 = X(1), d = L * beat;
