@@ -197,40 +197,22 @@
       return out;
     }
     for (i = 0; i <= N; i++) { s = Math.pow(i / N, 1.7); top.push([X(s), sway(s) - half(s)]); bot.push([X(s), sway(s) + half(s)]); }
-    bot.reverse();
-    var reach = 0.25 + 0.035 * flap, ty = sway(1), x1 = X(1), d = L * beat;
-    function shape() {
-      ctx.beginPath();
-      poly(top.concat(bot));
-      // Fins: broad at the root, swept back to a point, slowly rising and falling
-      [-1, 1].forEach(function (side) {
-        var tip = edge(0.76 - 0.03 * flap, side, reach);
-        poly(curve(edge(0.26, side), edge(0.3, side, reach * 1.15), tip).concat(curve(tip, edge(0.62, side, reach * 0.3), edge(0.57, side))));
-      });
-      // Tail: a wide crescent; it shortens and lengthens as it beats up and down
-      var up = [x1 - 0.2 * d, ty - L * 0.25], notch = [x1 - 0.05 * d, ty], down = [x1 - 0.2 * d, ty + L * 0.25];
-      poly(curve(edge(0.9, -1), [x1 + 0.03 * L, ty - L * 0.15], up).concat(curve(up, [x1 - 0.06 * d, ty - L * 0.09], notch),
-           curve(notch, [x1 - 0.06 * d, ty + L * 0.09], down), curve(down, [x1 + 0.03 * L, ty + L * 0.15], edge(0.9, 1))));
-    }
     ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.ang);
-    // A wide soft edge under a darker core gives the shadow depth
-    ctx.save(); ctx.scale(1.06, 1.1); ctx.fillStyle = "rgba(23,63,77,0.05)"; shape(); ctx.fill(); ctx.restore();
-    ctx.fillStyle = "rgba(23,63,77,0.14)"; shape(); ctx.fill();
-    // Pale lights along the back, lit one after another from head to tail
-    for (i = 0; i < 9; i++) {
-      s = 0.1 + i * 0.088;
-      var lit = Math.max(0, Math.sin(time * 2.2 - i * 0.75));
-      ctx.fillStyle = "rgba(232,252,255," + (0.1 + 0.4 * lit * lit).toFixed(3) + ")";
-      ctx.beginPath(); ctx.arc(X(s), sway(s), L * 0.004 + half(s) * 0.04, 0, 6.3); ctx.fill();
-    }
-    // and one faint line down each fin
-    ctx.lineCap = "round"; ctx.lineWidth = L * 0.01;
-    ctx.strokeStyle = "rgba(232,252,255," + (0.14 + 0.14 * Math.sin(time * 1.3)).toFixed(3) + ")";
+    ctx.fillStyle = "rgba(23,63,77,0.13)";
+    ctx.beginPath();
+    poly(top.concat(bot.reverse()));
+    // Fins: wide rounded paddles held out to the sides, slowly rising and falling
     [-1, 1].forEach(function (side) {
-      var a0 = edge(0.42, side, 0.03), c0 = edge(0.5, side, reach * 0.72), b0 = edge(0.68, side, reach * 0.8);
-      ctx.beginPath(); ctx.moveTo(a0[0], a0[1]); ctx.quadraticCurveTo(c0[0], c0[1], b0[0], b0[1]); ctx.stroke();
+      var reach = 0.21 + 0.03 * flap, a1 = edge(0.5, side, reach), a2 = edge(0.72, side, reach * 0.78);
+      poly(curve(edge(0.28, side), edge(0.32, side, reach * 1.05), a1).concat(
+           curve(a1, edge(0.7, side, reach * 1.08), a2), curve(a2, edge(0.68, side, 0.03), edge(0.56, side))));
     });
-    ctx.restore();
+    // Tail: wide and notched; it shortens and lengthens as it beats up and down
+    var ty = sway(1), x1 = X(1), d = L * beat;
+    var up = [x1 - 0.12 * d, ty - L * 0.2], notch = [x1 - 0.04 * d, ty], down = [x1 - 0.12 * d, ty + L * 0.2];
+    poly(curve(edge(0.9, -1), [x1 + 0.03 * L, ty - L * 0.15], up).concat(curve(up, [x1 - 0.06 * d, ty - L * 0.07], notch),
+         curve(notch, [x1 - 0.06 * d, ty + L * 0.07], down), curve(down, [x1 + 0.03 * L, ty + L * 0.15], edge(0.9, 1))));
+    ctx.fill(); ctx.restore();
   }
 
   function draw() {
@@ -248,13 +230,7 @@
     }
 
     // Shadows on the bottom are what make the water read as clear
-    if (giant) {
-      // The water dims a little while it is overhead
-      var u = (giant.x + giant.len * 0.7) / (W + giant.len * 1.3);
-      ctx.fillStyle = "rgba(23,63,77," + (0.08 * Math.sin(Math.PI * Math.min(1, Math.max(0, u)))).toFixed(3) + ")";
-      ctx.fillRect(0, 0, W, H);
-      drawGiant(giant);
-    }
+    if (giant) drawGiant(giant);
     drawTurtle(turtle, true);
     schools.forEach(function (sc) { sc.fish.forEach(function (f) { drawFish(f, null, true); }); });
     drawTurtle(turtle, false);
