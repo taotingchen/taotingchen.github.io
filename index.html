@@ -16,16 +16,18 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/style.css?v=5007c7a6">
+<link rel="stylesheet" href="assets/style.css?v=710e7d4f">
 </head>
-<body>
+<body data-search="assets/search-en.json?v=710e7d4f" data-root="">
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="nav">
   <a class="brand" href="./">Tao-Ting Chen</a>
   <nav aria-label="Primary">
+    <a href="#work">Work</a>
     <a href="#research">Publications</a>
     <a href="#contact">Contact</a>
+    <button class="search-btn" type="button" data-search-open aria-label="Search">Search <kbd>Ctrl K</kbd></button>
     <a class="lang" href="zh/" hreflang="zh-Hant">中文</a>
   </nav>
 </header>
@@ -35,8 +37,10 @@
     <canvas id="water" aria-hidden="true"></canvas>
     <div class="hero-copy">
       <h1>Tao-Ting Chen</h1>
-      <p class="lede">I research vision-language-action models for autonomous driving, with a focus on real-time inference.</p>
-
+      <p class="lede">Ph.D. student at NYCU. I research vision-language-action models for autonomous driving, with a focus on real-time inference.</p>
+      <p class="actions">
+        <a class="btn" href="#work">View work</a>
+      </p>
     </div>
   </section>
 
@@ -44,6 +48,38 @@
     <h2>About</h2>
     <div class="bio"><p>I am a Ph.D. student at the Institute of Computer Science and Engineering, National Yang Ming Chiao Tung University (NYCU), advised by Prof. Ching-Chun Huang.</p><p>My research is on end-to-end planning for autonomous driving with vision-language-action models, and on making these models fast enough to run in real time on edge hardware.</p></div>
     <p class="meta">PyTorch · VLM / VLA · NAVSIM · CARLA · Bench2Drive · Token pruning · Neural architecture search · NVIDIA Jetson</p>
+  </section>
+
+  <section id="work" class="section">
+    <h2>Work</h2>
+    <div class="chips" role="group" aria-label="Filter by topic"><button type="button" class="chip" data-topic="" aria-pressed="true">All</button><button type="button" class="chip" data-topic="Autonomous driving" aria-pressed="false">Autonomous driving</button><button type="button" class="chip" data-topic="Efficiency" aria-pressed="false">Efficiency</button><button type="button" class="chip" data-topic="Language models" aria-pressed="false">Language models</button><button type="button" class="chip" data-topic="Agents" aria-pressed="false">Agents</button><button type="button" class="chip" data-topic="Robotics" aria-pressed="false">Robotics</button></div>
+    <article class="featured" data-topics="Autonomous driving|Efficiency">
+      <h3><a href="projects/simlingo-ets2/">SimLingo × Euro Truck Simulator 2</a></h3>
+      <p>A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 56.9 ms per frame on a single consumer GPU.</p>
+      <figure class="chart">
+        <figcaption>Latency per frame after each optimization</figcaption>
+        <ol class="bars"><li class="bar"><span class="bar-label">Baseline</span><span class="bar-track"><span class="bar-fill" style="--w:100.0%"></span></span><span class="bar-value">691 ms</span></li><li class="bar"><span class="bar-label">Driving-only decode</span><span class="bar-track"><span class="bar-fill" style="--w:44.2%"></span></span><span class="bar-value">95.7 ms</span></li><li class="bar"><span class="bar-label">SDPA attention</span><span class="bar-track"><span class="bar-fill" style="--w:35.9%"></span></span><span class="bar-value">71.4 ms</span></li><li class="bar"><span class="bar-label">Merge LoRA</span><span class="bar-track"><span class="bar-fill" style="--w:32.1%"></span></span><span class="bar-value">62.3 ms</span></li><li class="bar is-final"><span class="bar-label">torch.compile</span><span class="bar-track"><span class="bar-fill" style="--w:29.5%"></span></span><span class="bar-value">56.9 ms</span></li></ol>
+      </figure>
+      <p class="meta">The report also covers the approaches that did not help: INT8 and FP8 quantization, TensorRT, and a dual-GPU setup.</p>
+      <p><a class="more" href="projects/simlingo-ets2/">Read the write-up →</a></p>
+    </article>
+    <ul class="list">
+      <li class="item" data-topics="Language models|Efficiency">
+        <h3>Parameter Golf</h3>
+        <p>My entry setup for OpenAI&#x27;s Parameter Golf challenge: training the best language model that fits in a 16 MB file, with an automated loop that proposes changes to the training script and keeps the ones that improve the score.</p>
+        <p class="meta">Quantization · Muon · Agents · 2026</p>
+      </li>
+      <li class="item" data-topics="Language models|Agents">
+        <h3>LLM Wiki</h3>
+        <p>A personal research knowledge base maintained by an LLM agent, covering autonomous driving, robotics and 3D reconstruction.</p>
+        <p class="meta">Agents · Obsidian · 2026</p>
+      </li>
+      <li class="item" data-topics="Robotics">
+        <h3>Homework-writing robot</h3>
+        <p>Reads a photographed worksheet, generates the answers, imitates a handwriting style and writes them on paper with a pen held by a modified 3D printer. Runs on a Jetson Nano without the cloud.</p>
+        <p class="meta">Vision transformer · OCR · Jetson Nano · 2024</p>
+      </li>
+    </ul>
   </section>
 
   <section id="research" class="section">
@@ -127,6 +163,11 @@
 </main>
 
 <footer class="footer">© <span id="year">2026</span> Tao-Ting Chen</footer>
-<script src="assets/main.js?v=5007c7a6" defer></script>
+
+<dialog class="search" aria-label="Search">
+  <input type="search" placeholder="Search projects, papers, posts" aria-label="Search" autocomplete="off">
+  <ul class="results" data-empty="Nothing found"></ul>
+</dialog>
+<script src="assets/main.js?v=710e7d4f" defer></script>
 </body>
 </html>

@@ -5,6 +5,61 @@
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  // Work: filter by topic, and reveal the projects past the first few
+  var chips = document.querySelectorAll(".chip"), moreBtn = document.querySelector("[data-more]"), expanded = false, topic = "";
+  function applyFilter() {
+    document.querySelectorAll("#work [data-topics]").forEach(function (el) {
+      var match = !topic || el.getAttribute("data-topics").split("|").indexOf(topic) >= 0;
+      el.hidden = !match || (!topic && !expanded && el.classList.contains("extra"));
+    });
+    if (moreBtn) moreBtn.hidden = expanded || !!topic;
+  }
+  chips.forEach(function (c) {
+    c.addEventListener("click", function () {
+      topic = c.getAttribute("data-topic");
+      chips.forEach(function (o) { o.setAttribute("aria-pressed", o === c ? "true" : "false"); });
+      applyFilter();
+    });
+  });
+  if (moreBtn) moreBtn.addEventListener("click", function () { expanded = true; applyFilter(); });
+  applyFilter();
+
+  // Search: Ctrl+K or the nav button. The index is fetched the first time it opens.
+  var dlg = document.querySelector("dialog.search");
+  if (dlg && dlg.showModal) {
+    var input = dlg.querySelector("input"), list = dlg.querySelector(".results"), entries = null, on = 0;
+    var esc = function (x) { return String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); };
+    var render = function () {
+      var words = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+      var hits = (entries || []).filter(function (e) {
+        var hay = (e.t + " " + e.d + " " + e.k).toLowerCase();
+        return words.every(function (w) { return hay.indexOf(w) >= 0; });
+      }).slice(0, 8);
+      on = Math.min(on, Math.max(0, hits.length - 1));
+      list.innerHTML = hits.map(function (e, i) {
+        var ext = /^http/.test(e.u) ? ' target="_blank" rel="noopener"' : "";
+        return '<li><a href="' + esc(e.u) + '"' + ext + (i === on ? ' class="on"' : "") + '><span class="kind">' + esc(e.k) + "</span>" + esc(e.t) + '<span class="desc">' + esc(e.d) + "</span></a></li>";
+      }).join("");
+    };
+    var open = function () {
+      if (dlg.open) return;
+      dlg.showModal(); input.value = ""; on = 0; render();
+      if (!entries) fetch(document.body.getAttribute("data-search")).then(function (r) { return r.json(); }).then(function (d) { entries = d; render(); }).catch(function () { entries = []; });
+    };
+    document.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); open(); }
+    });
+    document.querySelectorAll("[data-search-open]").forEach(function (b) { b.addEventListener("click", open); });
+    input.addEventListener("input", function () { on = 0; render(); });
+    input.addEventListener("keydown", function (e) {
+      var n = list.children.length;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (n) { on = (on + (e.key === "ArrowDown" ? 1 : n - 1)) % n; render(); } }
+      else if (e.key === "Enter") { var a = list.querySelector("a.on"); if (a) { dlg.close(); a.click(); } }
+    });
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+    list.addEventListener("click", function (e) { if (e.target.closest("a")) dlg.close(); });
+  }
+
   var canvas = document.getElementById("water");
   if (!canvas || !canvas.getContext) return;
   var ctx = canvas.getContext("2d");

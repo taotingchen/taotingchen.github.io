@@ -16,16 +16,18 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="../assets/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/style.css?v=5007c7a6">
+<link rel="stylesheet" href="../assets/style.css?v=710e7d4f">
 </head>
-<body>
+<body data-search="../assets/search-zh.json?v=710e7d4f" data-root="../">
 <a class="skip" href="#main">跳到主要內容</a>
 
 <header class="nav">
-  <a class="brand" href="../">陳道亭</a>
+  <a class="brand" href="../zh/">陳道亭</a>
   <nav aria-label="Primary">
+    <a href="#work">作品</a>
     <a href="#research">論文</a>
     <a href="#contact">聯絡</a>
+    <button class="search-btn" type="button" data-search-open aria-label="搜尋">搜尋 <kbd>Ctrl K</kbd></button>
     <a class="lang" href="../" hreflang="en">EN</a>
   </nav>
 </header>
@@ -35,8 +37,10 @@
     <canvas id="water" aria-hidden="true"></canvas>
     <div class="hero-copy">
       <h1>陳道亭</h1>
-      <p class="lede">我研究自動駕駛的視覺-語言-動作（VLA）模型，專注於即時推論。</p>
-
+      <p class="lede">陽明交通大學博士生，研究自動駕駛的視覺-語言-動作（VLA）模型，專注於即時推論。</p>
+      <p class="actions">
+        <a class="btn" href="#work">查看作品</a>
+      </p>
     </div>
   </section>
 
@@ -44,6 +48,38 @@
     <h2>關於我</h2>
     <div class="bio"><p>我是國立陽明交通大學資訊科學與工程研究所的博士生，指導教授為黃敬群教授。</p><p>我研究以視覺-語言-動作模型進行端到端自動駕駛規劃，以及如何讓這類模型在邊緣裝置上達到即時推論。</p></div>
     <p class="meta">PyTorch · VLM / VLA · NAVSIM · CARLA · Bench2Drive · Token pruning · Neural architecture search · NVIDIA Jetson</p>
+  </section>
+
+  <section id="work" class="section">
+    <h2>作品</h2>
+    <div class="chips" role="group" aria-label="依主題篩選"><button type="button" class="chip" data-topic="" aria-pressed="true">全部</button><button type="button" class="chip" data-topic="Autonomous driving" aria-pressed="false">自動駕駛</button><button type="button" class="chip" data-topic="Efficiency" aria-pressed="false">效率</button><button type="button" class="chip" data-topic="Language models" aria-pressed="false">語言模型</button><button type="button" class="chip" data-topic="Agents" aria-pressed="false">代理</button><button type="button" class="chip" data-topic="Robotics" aria-pressed="false">機器人</button></div>
+    <article class="featured" data-topics="Autonomous driving|Efficiency">
+      <h3><a href="projects/simlingo-ets2/">SimLingo × 歐洲卡車模擬 2</a></h3>
+      <p>以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 56.9 ms。</p>
+      <figure class="chart">
+        <figcaption>各項最佳化後的每幀延遲</figcaption>
+        <ol class="bars"><li class="bar"><span class="bar-label">原始版本</span><span class="bar-track"><span class="bar-fill" style="--w:100.0%"></span></span><span class="bar-value">691 ms</span></li><li class="bar"><span class="bar-label">只解碼駕駛輸出</span><span class="bar-track"><span class="bar-fill" style="--w:44.2%"></span></span><span class="bar-value">95.7 ms</span></li><li class="bar"><span class="bar-label">SDPA 注意力</span><span class="bar-track"><span class="bar-fill" style="--w:35.9%"></span></span><span class="bar-value">71.4 ms</span></li><li class="bar"><span class="bar-label">合併 LoRA</span><span class="bar-track"><span class="bar-fill" style="--w:32.1%"></span></span><span class="bar-value">62.3 ms</span></li><li class="bar is-final"><span class="bar-label">torch.compile</span><span class="bar-track"><span class="bar-fill" style="--w:29.5%"></span></span><span class="bar-value">56.9 ms</span></li></ol>
+      </figure>
+      <p class="meta">報告也記錄了沒有幫助的方法：INT8 與 FP8 量化、TensorRT，以及雙 GPU 配置。</p>
+      <p><a class="more" href="projects/simlingo-ets2/">閱讀完整說明 →</a></p>
+    </article>
+    <ul class="list">
+      <li class="item" data-topics="Language models|Efficiency">
+        <h3>Parameter Golf</h3>
+        <p>參加 OpenAI Parameter Golf 挑戰的實驗環境：在 16 MB 的檔案大小限制內訓練出最好的語言模型，並以自動化流程提出訓練程式的修改、保留有改善的版本。</p>
+        <p class="meta">Quantization · Muon · Agents · 2026</p>
+      </li>
+      <li class="item" data-topics="Language models|Agents">
+        <h3>LLM Wiki</h3>
+        <p>由 LLM 代理維護的個人研究知識庫，涵蓋自動駕駛、機器人與 3D 重建。</p>
+        <p class="meta">Agents · Obsidian · 2026</p>
+      </li>
+      <li class="item" data-topics="Robotics">
+        <h3>寫作業機器人</h3>
+        <p>讀取題目照片並產生解答，模仿手寫風格後轉成 G-code，由改裝的 3D 列印機握筆寫在紙上。全程在 Jetson Nano 上執行，不依賴雲端。</p>
+        <p class="meta">Vision transformer · OCR · Jetson Nano · 2024</p>
+      </li>
+    </ul>
   </section>
 
   <section id="research" class="section">
@@ -127,6 +163,11 @@
 </main>
 
 <footer class="footer">© <span id="year">2026</span> 陳道亭</footer>
-<script src="../assets/main.js?v=5007c7a6" defer></script>
+
+<dialog class="search" aria-label="搜尋">
+  <input type="search" placeholder="搜尋作品、論文、文章" aria-label="搜尋" autocomplete="off">
+  <ul class="results" data-empty="找不到結果"></ul>
+</dialog>
+<script src="../assets/main.js?v=710e7d4f" defer></script>
 </body>
 </html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#cdeef3">
+<title>SimLingo × Euro Truck Simulator 2 · Tao-Ting Chen</title>
+<meta name="description" content="A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 56.9 ms per frame on a single consumer GPU.">
+<link rel="canonical" href="https://taotingchen.github.io/projects/simlingo-ets2/">
+<link rel="alternate" hreflang="en" href="https://taotingchen.github.io/projects/simlingo-ets2/">
+<link rel="alternate" hreflang="zh-Hant" href="https://taotingchen.github.io/zh/projects/simlingo-ets2/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SimLingo × Euro Truck Simulator 2 · Tao-Ting Chen">
+<meta property="og:description" content="A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 56.9 ms per frame on a single consumer GPU.">
+<meta property="og:url" content="https://taotingchen.github.io/projects/simlingo-ets2/">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../../assets/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/style.css?v=710e7d4f">
+</head>
+<body data-search="../../assets/search-en.json?v=710e7d4f" data-root="../../">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <a class="brand" href="../../">Tao-Ting Chen</a>
+  <nav aria-label="Primary">
+    <a href="../../#work">Work</a>
+    <a href="../../#research">Publications</a>
+    <a href="../../#contact">Contact</a>
+    <button class="search-btn" type="button" data-search-open aria-label="Search">Search <kbd>Ctrl K</kbd></button>
+    <a class="lang" href="../../zh/projects/simlingo-ets2/" hreflang="zh-Hant">中文</a>
+  </nav>
+</header>
+
+<main id="main">
+  <article class="page">
+    <p class="back"><a href="../../#work">← Work</a></p>
+    <h1>SimLingo × Euro Truck Simulator 2</h1>
+    <p class="lede">A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 56.9 ms per frame on a single consumer GPU.</p>
+    <p class="meta">PyTorch · InternVL2 · Qwen2 · LoRA · Triton · CARLA</p>
+    <div class="prose">
+<h2>Goal</h2>
+<p>SimLingo is a vision-language-action model built on InternVL2-1B: a 24-layer vision transformer, the Qwen2-0.5B language model, and LoRA adapters. I fine-tuned it to drive a truck in Euro Truck Simulator 2 from screen captures alone.</p>
+<p>Out of the box one frame took 691 ms, which is far too slow to steer with. The target was 25 ms per frame (40 FPS) on one NVIDIA RTX 5060 Ti with 16 GB of memory.</p>
+<h2>What worked</h2>
+<p>Each row adds one change on top of the previous ones.</p>
+<div class="table"><table><thead><tr><th>Change</th><th>Latency</th><th>Speedup</th></tr></thead><tbody><tr><td>Original pipeline</td><td>691 ms</td><td>1.0×</td></tr><tr><td>Decode only the driving output, skip language generation</td><td>95.7 ms</td><td>7.2×</td></tr><tr><td>Scaled-dot-product attention in the vision transformer</td><td>75.1 ms</td><td>9.2×</td></tr><tr><td>The same in the language model</td><td>71.4 ms</td><td>9.7×</td></tr><tr><td>Merge the LoRA weights into the base model</td><td>62.3 ms</td><td>11.1×</td></tr><tr><td>fp16 instead of bf16</td><td>62.2 ms</td><td>11.1×</td></tr><tr><td><code>torch.compile</code> in default mode</td><td>56.9 ms</td><td>12.1×</td></tr></tbody></table></div>
+<figure class="chart">
+        <figcaption>Latency per frame after each optimization</figcaption>
+        <ol class="bars"><li class="bar"><span class="bar-label">Baseline</span><span class="bar-track"><span class="bar-fill" style="--w:100.0%"></span></span><span class="bar-value">691 ms</span></li><li class="bar"><span class="bar-label">Driving-only decode</span><span class="bar-track"><span class="bar-fill" style="--w:44.2%"></span></span><span class="bar-value">95.7 ms</span></li><li class="bar"><span class="bar-label">SDPA attention</span><span class="bar-track"><span class="bar-fill" style="--w:35.9%"></span></span><span class="bar-value">71.4 ms</span></li><li class="bar"><span class="bar-label">Merge LoRA</span><span class="bar-track"><span class="bar-fill" style="--w:32.1%"></span></span><span class="bar-value">62.3 ms</span></li><li class="bar is-final"><span class="bar-label">torch.compile</span><span class="bar-track"><span class="bar-fill" style="--w:29.5%"></span></span><span class="bar-value">56.9 ms</span></li></ol>
+      </figure>
+<p>The largest gain was not a low-level optimization. The model was generating a sentence of explanation on every frame, and driving does not need it.</p>
+<h2>What did not help</h2>
+<ul><li><strong>INT8 quantization.</strong> Weight-only INT8 measured 78.6 ms without compilation and 64.7 ms with it, both slower than fp16. The weights are converted back to fp16 before every matrix multiply, so the conversion is pure overhead.</li><li><strong>FP8.</strong> The GPU's math library does not support it on this card yet.</li><li><strong>Other <code>torch.compile</code> modes.</strong> <code>reduce-overhead</code> and <code>max-autotune</code> both made the vision transformer about twice as slow.</li><li><strong>ONNX Runtime and TensorRT.</strong> The exported graph loses the fast attention path, so the vision transformer took about 56 ms against 38 ms in PyTorch.</li><li><strong>A second GPU.</strong> Putting the vision transformer and the language model on separate cards measured 66.7 ms against 62.2 ms on one card. The two stages run one after the other, so splitting them only adds transfer time.</li></ul>
+<h2>Two mistakes worth recording</h2>
+<p>My first dual-GPU measurement said 37.9 ms. It was wrong: the timer only covered the first GPU and missed the work on the second. Timing the whole pipeline gave 66.7 ms.</p>
+<p>For a while <code>torch.compile</code> gave no speedup at all. A missing system package, <code>libpython3.12-dev</code>, stopped the compiler from building its launcher, and every call quietly fell back to the slow path with no error.</p>
+<h2>Where the time goes now</h2>
+<p>In the best configuration the vision transformer takes about 38 ms and the language model about 25 ms, with roughly 6 ms of image preprocessing on the CPU. The vision transformer is the bottleneck.</p>
+<h2>Limits and next steps</h2>
+<p>The 25 ms target has not been reached. 56.9 ms is about 17 frames per second.</p>
+<p>These numbers measure latency only. I have not yet measured how the changes affect driving quality in closed loop, and that is the next thing to do. After that: a fused kernel for the vision transformer's MLP layers, the same code on a GPU with more compute units, and distilling the model to fewer layers.</p>
+    </div>
+  </article>
+</main>
+
+<footer class="footer">© <span id="year">2026</span> Tao-Ting Chen</footer>
+
+<dialog class="search" aria-label="Search">
+  <input type="search" placeholder="Search projects, papers, posts" aria-label="Search" autocomplete="off">
+  <ul class="results" data-empty="Nothing found"></ul>
+</dialog>
+<script src="../../assets/main.js?v=710e7d4f" defer></script>
+</body>
+</html>

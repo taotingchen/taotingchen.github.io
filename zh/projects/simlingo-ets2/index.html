@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#cdeef3">
+<title>SimLingo × 歐洲卡車模擬 2 · 陳道亭</title>
+<meta name="description" content="以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 56.9 ms。">
+<link rel="canonical" href="https://taotingchen.github.io/zh/projects/simlingo-ets2/">
+<link rel="alternate" hreflang="en" href="https://taotingchen.github.io/projects/simlingo-ets2/">
+<link rel="alternate" hreflang="zh-Hant" href="https://taotingchen.github.io/zh/projects/simlingo-ets2/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SimLingo × 歐洲卡車模擬 2 · 陳道亭">
+<meta property="og:description" content="以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 56.9 ms。">
+<meta property="og:url" content="https://taotingchen.github.io/zh/projects/simlingo-ets2/">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../../../assets/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../assets/style.css?v=710e7d4f">
+</head>
+<body data-search="../../../assets/search-zh.json?v=710e7d4f" data-root="../../../">
+<a class="skip" href="#main">跳到主要內容</a>
+
+<header class="nav">
+  <a class="brand" href="../../../zh/">陳道亭</a>
+  <nav aria-label="Primary">
+    <a href="../../../zh/#work">作品</a>
+    <a href="../../../zh/#research">論文</a>
+    <a href="../../../zh/#contact">聯絡</a>
+    <button class="search-btn" type="button" data-search-open aria-label="搜尋">搜尋 <kbd>Ctrl K</kbd></button>
+    <a class="lang" href="../../../projects/simlingo-ets2/" hreflang="en">EN</a>
+  </nav>
+</header>
+
+<main id="main">
+  <article class="page">
+    <p class="back"><a href="../../#work">← 作品</a></p>
+    <h1>SimLingo × 歐洲卡車模擬 2</h1>
+    <p class="lede">以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 56.9 ms。</p>
+    <p class="meta">PyTorch · InternVL2 · Qwen2 · LoRA · Triton · CARLA</p>
+    <div class="prose">
+<h2>目標</h2>
+<p>SimLingo 是建立在 InternVL2-1B 上的視覺-語言-動作模型，由 24 層的視覺 Transformer、Qwen2-0.5B 語言模型和 LoRA 組成。我將它微調成只靠螢幕畫面就能在《歐洲卡車模擬 2》裡開卡車。</p>
+<p>原始版本處理一幀要 691 ms，慢到無法用來控制方向盤。目標是在一張 16 GB 的 NVIDIA RTX 5060 Ti 上做到每幀 25 ms（40 FPS）。</p>
+<h2>有效的做法</h2>
+<p>每一列都是在前一列的基礎上再加一項修改。</p>
+<div class="table"><table><thead><tr><th>修改</th><th>延遲</th><th>加速</th></tr></thead><tbody><tr><td>原始流程</td><td>691 ms</td><td>1.0×</td></tr><tr><td>只解碼駕駛輸出，不產生文字</td><td>95.7 ms</td><td>7.2×</td></tr><tr><td>視覺 Transformer 改用 scaled-dot-product attention</td><td>75.1 ms</td><td>9.2×</td></tr><tr><td>語言模型也改用</td><td>71.4 ms</td><td>9.7×</td></tr><tr><td>將 LoRA 權重合併進主模型</td><td>62.3 ms</td><td>11.1×</td></tr><tr><td>以 fp16 取代 bf16</td><td>62.2 ms</td><td>11.1×</td></tr><tr><td><code>torch.compile</code> 預設模式</td><td>56.9 ms</td><td>12.1×</td></tr></tbody></table></div>
+<figure class="chart">
+        <figcaption>各項最佳化後的每幀延遲</figcaption>
+        <ol class="bars"><li class="bar"><span class="bar-label">原始版本</span><span class="bar-track"><span class="bar-fill" style="--w:100.0%"></span></span><span class="bar-value">691 ms</span></li><li class="bar"><span class="bar-label">只解碼駕駛輸出</span><span class="bar-track"><span class="bar-fill" style="--w:44.2%"></span></span><span class="bar-value">95.7 ms</span></li><li class="bar"><span class="bar-label">SDPA 注意力</span><span class="bar-track"><span class="bar-fill" style="--w:35.9%"></span></span><span class="bar-value">71.4 ms</span></li><li class="bar"><span class="bar-label">合併 LoRA</span><span class="bar-track"><span class="bar-fill" style="--w:32.1%"></span></span><span class="bar-value">62.3 ms</span></li><li class="bar is-final"><span class="bar-label">torch.compile</span><span class="bar-track"><span class="bar-fill" style="--w:29.5%"></span></span><span class="bar-value">56.9 ms</span></li></ol>
+      </figure>
+<p>最大的一步並不是底層最佳化。模型原本每一幀都會產生一句文字說明，而開車並不需要它。</p>
+<h2>沒有幫助的做法</h2>
+<ul><li><strong>INT8 量化</strong>：只量化權重時，未編譯為 78.6 ms，編譯後為 64.7 ms，都比 fp16 慢。權重在每次矩陣乘法前都要轉回 fp16，這段轉換完全是額外開銷。</li><li><strong>FP8</strong>：這張顯示卡的數學函式庫目前還不支援。</li><li><strong><code>torch.compile</code> 的其他模式</strong>：<code>reduce-overhead</code> 和 <code>max-autotune</code> 都讓視覺 Transformer 慢了大約一倍。</li><li><strong>ONNX Runtime 與 TensorRT</strong>：匯出的計算圖失去了快速的 attention 路徑，視覺 Transformer 約 56 ms，PyTorch 則是 38 ms。</li><li><strong>第二張 GPU</strong>：把視覺 Transformer 和語言模型放在不同顯示卡上是 66.7 ms，單卡是 62.2 ms。兩個階段是依序執行的，拆開只會多出傳輸時間。</li></ul>
+<h2>兩個值得記下來的錯誤</h2>
+<p>我第一次量雙 GPU 時得到 37.9 ms，這個數字是錯的：計時只涵蓋第一張 GPU，漏掉了第二張上的運算。量完整流程後是 66.7 ms。</p>
+<p>有一段時間 <code>torch.compile</code> 完全沒有加速。原因是系統少了 <code>libpython3.12-dev</code> 這個套件，編譯器無法建立啟動程式，於是每次呼叫都悄悄退回慢速路徑，而且沒有任何錯誤訊息。</p>
+<h2>現在時間花在哪裡</h2>
+<p>在最佳配置下，視覺 Transformer 約 38 ms，語言模型約 25 ms，另外有大約 6 ms 是在 CPU 上做影像前處理。瓶頸在視覺 Transformer。</p>
+<h2>限制與後續</h2>
+<p>25 ms 的目標還沒有達到，56.9 ms 大約是每秒 17 幀。</p>
+<p>這些數字只量了延遲。這些修改對閉迴路駕駛品質的影響我還沒有量，這是下一步要做的事。之後的方向包括：為視覺 Transformer 的 MLP 層寫融合 kernel、在運算單元更多的 GPU 上跑同一份程式，以及把模型蒸餾成較少層。</p>
+    </div>
+  </article>
+</main>
+
+<footer class="footer">© <span id="year">2026</span> 陳道亭</footer>
+
+<dialog class="search" aria-label="搜尋">
+  <input type="search" placeholder="搜尋作品、論文、文章" aria-label="搜尋" autocomplete="off">
+  <ul class="results" data-empty="找不到結果"></ul>
+</dialog>
+<script src="../../../assets/main.js?v=710e7d4f" defer></script>
+</body>
+</html>

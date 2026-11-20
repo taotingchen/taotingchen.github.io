@@ -1,3 +1,5 @@
 preview/
 brand/
 __pycache__/
+# unreviewed draft post, remove this line when it is ready to publish
+posts/2026-11-21-three-lessons-from-speeding-up-a-driving-model.*

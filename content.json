@@ -26,8 +26,8 @@
       "zh": "Tao-Ting Chen"
     },
     "lede": {
-      "en": "I research vision-language-action models for autonomous driving, with a focus on real-time inference.",
-      "zh": "我研究自動駕駛的視覺-語言-動作（VLA）模型，專注於即時推論。"
+      "en": "Ph.D. student at NYCU. I research vision-language-action models for autonomous driving, with a focus on real-time inference.",
+      "zh": "陽明交通大學博士生，研究自動駕駛的視覺-語言-動作（VLA）模型，專注於即時推論。"
     },
     "cta_work": {
       "en": "View work",
@@ -95,8 +95,8 @@
   ],
   "work": {
     "heading": {
-      "en": "Selected work",
-      "zh": "精選作品"
+      "en": "Work",
+      "zh": "作品"
     },
     "featured": {
       "tag": {
@@ -108,8 +108,8 @@
         "zh": "SimLingo × 歐洲卡車模擬 2"
       },
       "body": {
-        "en": "A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 57 ms per frame on a single consumer GPU.",
-        "zh": "以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 57 ms。"
+        "en": "A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 56.9 ms per frame on a single consumer GPU.",
+        "zh": "以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 56.9 ms。"
       },
       "chart_title": {
         "en": "Latency per frame after each optimization",
@@ -158,8 +158,8 @@
       },
       "link": "#",
       "link_label": {
-        "en": "Read the report",
-        "zh": "閱讀報告"
+        "en": "Read the write-up",
+        "zh": "閱讀完整說明"
       },
       "stack": [
         "PyTorch",
@@ -169,7 +169,17 @@
         "Triton",
         "CARLA"
       ],
-      "todo": true
+      "slug": "simlingo-ets2",
+      "topics": [
+        {
+          "en": "Autonomous driving",
+          "zh": "自動駕駛"
+        },
+        {
+          "en": "Efficiency",
+          "zh": "效率"
+        }
+      ]
     }
   },
   "research": {
@@ -317,9 +327,37 @@
       "en": "Skip to content",
       "zh": "跳到主要內容"
     },
-    "nav_side": {
-      "en": "Projects",
-      "zh": "專案"
+    "nav_blog": {
+      "en": "Blog",
+      "zh": "文章"
+    },
+    "all": {
+      "en": "All",
+      "zh": "全部"
+    },
+    "filter": {
+      "en": "Filter by topic",
+      "zh": "依主題篩選"
+    },
+    "more": {
+      "en": "Show {n} more",
+      "zh": "顯示另外 {n} 個"
+    },
+    "view_all": {
+      "en": "All posts",
+      "zh": "所有文章"
+    },
+    "search": {
+      "en": "Search",
+      "zh": "搜尋"
+    },
+    "search_placeholder": {
+      "en": "Search projects, papers, posts",
+      "zh": "搜尋作品、論文、文章"
+    },
+    "search_empty": {
+      "en": "Nothing found",
+      "zh": "找不到結果"
     }
   },
   "side": {
@@ -339,8 +377,8 @@
           "zh": "Parameter Golf"
         },
         "body": {
-          "en": "Training language models under a 16 MB size limit, using an automated loop that proposes changes to the training script and keeps those that improve the result.",
-          "zh": "在 16 MB 的大小限制下訓練語言模型，以自動化流程提出訓練程式的修改，並保留有改善的版本。"
+          "en": "My entry setup for OpenAI's Parameter Golf challenge: training the best language model that fits in a 16 MB file, with an automated loop that proposes changes to the training script and keeps the ones that improve the score.",
+          "zh": "參加 OpenAI Parameter Golf 挑戰的實驗環境：在 16 MB 的檔案大小限制內訓練出最好的語言模型，並以自動化流程提出訓練程式的修改、保留有改善的版本。"
         },
         "stack": [
           "Quantization",
@@ -348,8 +386,17 @@
           "Agents"
         ],
         "link": "#",
-        "todo": true,
-        "year": "2026"
+        "year": "2026",
+        "topics": [
+          {
+            "en": "Language models",
+            "zh": "語言模型"
+          },
+          {
+            "en": "Efficiency",
+            "zh": "效率"
+          }
+        ]
       },
       {
         "tag": {
@@ -371,7 +418,13 @@
         ],
         "link": "#",
         "todo": true,
-        "year": "2026"
+        "year": "2026",
+        "topics": [
+          {
+            "en": "Generative models",
+            "zh": "生成模型"
+          }
+        ]
       },
       {
         "tag": {
@@ -392,7 +445,16 @@
         ],
         "link": "#",
         "year": "2026",
-        "todo": true
+        "topics": [
+          {
+            "en": "Language models",
+            "zh": "語言模型"
+          },
+          {
+            "en": "Agents",
+            "zh": "代理"
+          }
+        ]
       },
       {
         "tag": {
@@ -413,7 +475,13 @@
         ],
         "link": "#",
         "todo": true,
-        "year": "2026"
+        "year": "2026",
+        "topics": [
+          {
+            "en": "Generative models",
+            "zh": "生成模型"
+          }
+        ]
       },
       {
         "tag": {
@@ -435,7 +503,12 @@
         ],
         "year": "2024",
         "link": "#",
-        "todo": true
+        "topics": [
+          {
+            "en": "Robotics",
+            "zh": "機器人"
+          }
+        ]
       }
     ]
   },
