@@ -11,7 +11,7 @@
   var hero = canvas.parentElement;
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var SHADOW = "rgba(23,63,77,0.10)";
-  var W = 0, H = 0, time = 0, last = 0, mouse = null, caustics = null, schools = [], turtle = null;
+  var W = 0, H = 0, time = 0, last = 0, mouse = null, caustics = null, schools = [], turtle = null, giant = null, seen = false;
 
   function rnd(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
@@ -53,6 +53,15 @@
     turtle = { x: W * 0.86, y: H * 0.34, vx: -7, vy: -2 };
   }
 
+  // Easter egg: the shadow of something very large passes over the bottom.
+  // It shows up once if you stay a while, or whenever you tap the turtle.
+  function summon() {
+    if (giant || reduce || !W) return;
+    seen = true;
+    var len = Math.max(W, H) * 0.85;
+    giant = { len: len, x: W + len * 0.6, y: H * 0.26, ang: Math.PI - 0.1, speed: (W + len * 1.3) / 22 };
+  }
+
   function resize() {
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var w = canvas.clientWidth, h = canvas.clientHeight;
@@ -70,10 +79,20 @@
       sc.fish.forEach(function (f) { f.x *= sx; f.y *= sy; });
     });
     turtle.x *= sx; turtle.y *= sy;
+    if (giant) { giant.x *= sx; giant.y *= sy; }
   }
 
   function step(dt) {
     time += dt;
+    if (!seen && time > 40 && window.scrollY < H * 0.5) summon();
+    var scare = null;
+    if (giant) {
+      giant.x += Math.cos(giant.ang) * giant.speed * dt; giant.y += Math.sin(giant.ang) * giant.speed * dt;
+      if (giant.x < -giant.len * 0.7) giant = null;
+      else scare = [0.38, 0.12, -0.14].map(function (u) {
+        return [giant.x + Math.cos(giant.ang) * giant.len * u, giant.y + Math.sin(giant.ang) * giant.len * u];
+      });
+    }
     schools.forEach(function (sc) {
       sc.ax += sc.vx * dt; sc.ay += Math.sin(time * 0.25 + sc.vx) * 4 * dt;
       var jump = 0;
@@ -85,6 +104,13 @@
         if (mouse) {
           var dx = f.x - mouse.x, dy = f.y - mouse.y, m = Math.sqrt(dx * dx + dy * dy) || 1;
           if (m < 130) { var push = (1 - m / 130) * 900; ax += dx / m * push; ay += dy / m * push; }
+        }
+        if (scare) {
+          var R = giant.len * 0.17;
+          scare.forEach(function (p) {
+            var ex = f.x - p[0], ey = f.y - p[1], d = Math.sqrt(ex * ex + ey * ey) || 1;
+            if (d < R) { var pu = (1 - d / R) * 700; ax += ex / d * pu; ay += ey / d * pu; }
+          });
         }
         f.vx += ax * dt; f.vy += ay * dt; f.x += f.vx * dt; f.y += f.vy * dt;
       });
@@ -118,6 +144,48 @@
     ctx.restore();
   }
 
+  // One closed outline, wound the same way as the others so overlaps do not cancel out.
+  function poly(pts) {
+    var a = 0, i, n = pts.length;
+    for (i = 0; i < n; i++) { var p = pts[i], q = pts[(i + 1) % n]; a += p[0] * q[1] - q[0] * p[1]; }
+    if (a > 0) pts.reverse();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (i = 1; i < n; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.closePath();
+  }
+
+  // Seen from above: blunt wide head, swept side fins, long body, slow tail.
+  function drawGiant(g) {
+    var L = g.len, N = 64, i, s, top = [], bot = [];
+    function X(s) { return (0.5 - s) * L; }
+    function half(s) {
+      var p = s < 0.2 ? Math.pow(1 - Math.pow(1 - s / 0.2, 2), 0.42) : 0.03 + 0.97 * Math.pow(1 - (s - 0.2) / 0.8, 1.3);
+      return p * L * 0.08;
+    }
+    function sway(s) { return Math.sin(time * 1.1 - s * 3.2) * L * 0.04 * s * s; }
+    function edge(s, side, out) { return [X(s), sway(s) + side * (half(s) * (out ? 1 : 0.6) + (out || 0) * L)]; }
+    // Points along a curve from a to b that bends toward c
+    function curve(a, c, b) {
+      var out = [], k, u, v;
+      for (k = 0; k <= 10; k++) { u = k / 10; v = 1 - u; out.push([v * v * a[0] + 2 * v * u * c[0] + u * u * b[0], v * v * a[1] + 2 * v * u * c[1] + u * u * b[1]]); }
+      return out;
+    }
+    for (i = 0; i <= N; i++) { s = Math.pow(i / N, 1.7); top.push([X(s), sway(s) - half(s)]); bot.push([X(s), sway(s) + half(s)]); }
+    ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.ang);
+    ctx.fillStyle = "rgba(23,63,77,0.13)";
+    ctx.beginPath();
+    poly(top.concat(bot.reverse()));
+    [-1, 1].forEach(function (side) {
+      var tip = edge(0.5, side, 0.115), small = edge(0.76, side, 0.03);
+      poly(curve(edge(0.23, side), edge(0.3, side, 0.1), tip).concat(curve(tip, edge(0.4, side, 0.035), edge(0.37, side))));
+      poly(curve(edge(0.66, side), edge(0.7, side, 0.03), small).concat(curve(small, edge(0.73, side, 0.008), edge(0.73, side))));
+    });
+    var ty = sway(1), x1 = X(1), up = [x1 - L * 0.075, ty - L * 0.1], notch = [x1 - L * 0.02, ty], down = [x1 - L * 0.04, ty + L * 0.055];
+    poly(curve(edge(0.9, -1), [x1 - L * 0.01, ty - L * 0.07], up).concat(curve(up, [x1 - L * 0.03, ty - L * 0.035], notch),
+         curve(notch, [x1 - L * 0.025, ty + L * 0.02], down), curve(down, [x1, ty + L * 0.04], edge(0.9, 1))));
+    ctx.fill(); ctx.restore();
+  }
+
   function draw() {
     // Water: sky blue, paling toward the bottom edge where it meets the sand
     var g = ctx.createLinearGradient(0, 0, 0, H);
@@ -133,6 +201,7 @@
     }
 
     // Shadows on the bottom are what make the water read as clear
+    if (giant) drawGiant(giant);
     drawTurtle(turtle, true);
     schools.forEach(function (sc) { sc.fish.forEach(function (f) { drawFish(f, null, true); }); });
     drawTurtle(turtle, false);
@@ -153,10 +222,15 @@
   hero.addEventListener("pointermove", function (e) {
     var r = canvas.getBoundingClientRect(); mouse = { x: e.clientX - r.left, y: e.clientY - r.top };
   });
+  hero.addEventListener("pointerdown", function (e) {
+    var r = canvas.getBoundingClientRect(), dx = e.clientX - r.left - turtle.x, dy = e.clientY - r.top - turtle.y;
+    if (dx * dx + dy * dy < 2500) summon();
+  });
   hero.addEventListener("pointerleave", function () { mouse = null; });
   window.addEventListener("resize", function () { resize(); if (reduce) draw(); });
 
   caustics = makeCaustics();
   resize();
+  if (location.hash === "#deep") summon();
   if (reduce) draw(); else requestAnimationFrame(tick);
 })();
