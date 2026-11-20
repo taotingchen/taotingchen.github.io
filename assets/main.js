@@ -154,20 +154,22 @@
     ctx.closePath();
   }
 
-  // Seen from above: blunt wide head, swept side fins, long body, slow tail.
+  // Seen from above: a whale with long wing-like flippers and a broad tail,
+  // somewhere between a humpback and the great fish Kun.
   function drawGiant(g) {
     var L = g.len, N = 64, i, s, top = [], bot = [];
+    var flap = Math.sin(time * 0.9), beat = 0.78 + 0.22 * Math.sin(time * 1.1 + 1);
     function X(s) { return (0.5 - s) * L; }
     function half(s) {
-      var p = s < 0.2 ? Math.pow(1 - Math.pow(1 - s / 0.2, 2), 0.42) : 0.03 + 0.97 * Math.pow(1 - (s - 0.2) / 0.8, 1.3);
-      return p * L * 0.08;
+      var p = s < 0.3 ? Math.sqrt(1 - Math.pow(1 - s / 0.3, 2)) : 0.13 + 0.87 * Math.pow(1 - (s - 0.3) / 0.7, 1.45);
+      return p * L * 0.092;
     }
-    function sway(s) { return Math.sin(time * 1.1 - s * 3.2) * L * 0.04 * s * s; }
+    function sway(s) { return Math.sin(time * 1.1 - s * 3) * L * 0.012 * s * s; }
     function edge(s, side, out) { return [X(s), sway(s) + side * (half(s) * (out ? 1 : 0.6) + (out || 0) * L)]; }
     // Points along a curve from a to b that bends toward c
     function curve(a, c, b) {
       var out = [], k, u, v;
-      for (k = 0; k <= 10; k++) { u = k / 10; v = 1 - u; out.push([v * v * a[0] + 2 * v * u * c[0] + u * u * b[0], v * v * a[1] + 2 * v * u * c[1] + u * u * b[1]]); }
+      for (k = 0; k <= 12; k++) { u = k / 12; v = 1 - u; out.push([v * v * a[0] + 2 * v * u * c[0] + u * u * b[0], v * v * a[1] + 2 * v * u * c[1] + u * u * b[1]]); }
       return out;
     }
     for (i = 0; i <= N; i++) { s = Math.pow(i / N, 1.7); top.push([X(s), sway(s) - half(s)]); bot.push([X(s), sway(s) + half(s)]); }
@@ -175,14 +177,16 @@
     ctx.fillStyle = "rgba(23,63,77,0.13)";
     ctx.beginPath();
     poly(top.concat(bot.reverse()));
+    // Flippers: long, swept back, slowly rising and falling
     [-1, 1].forEach(function (side) {
-      var tip = edge(0.5, side, 0.115), small = edge(0.76, side, 0.03);
-      poly(curve(edge(0.23, side), edge(0.3, side, 0.1), tip).concat(curve(tip, edge(0.4, side, 0.035), edge(0.37, side))));
-      poly(curve(edge(0.66, side), edge(0.7, side, 0.03), small).concat(curve(small, edge(0.73, side, 0.008), edge(0.73, side))));
+      var reach = 0.2 + 0.035 * flap, tip = edge(0.6 - 0.03 * flap, side, reach);
+      poly(curve(edge(0.25, side), edge(0.33, side, reach * 0.95), tip).concat(curve(tip, edge(0.47, side, reach * 0.3), edge(0.36, side))));
     });
-    var ty = sway(1), x1 = X(1), up = [x1 - L * 0.075, ty - L * 0.1], notch = [x1 - L * 0.02, ty], down = [x1 - L * 0.04, ty + L * 0.055];
-    poly(curve(edge(0.9, -1), [x1 - L * 0.01, ty - L * 0.07], up).concat(curve(up, [x1 - L * 0.03, ty - L * 0.035], notch),
-         curve(notch, [x1 - L * 0.025, ty + L * 0.02], down), curve(down, [x1, ty + L * 0.04], edge(0.9, 1))));
+    // Tail: wide and notched; it shortens and lengthens as it beats up and down
+    var ty = sway(1), x1 = X(1), d = L * beat;
+    var up = [x1 - 0.085 * d, ty - L * 0.15], notch = [x1 - 0.03 * d, ty], down = [x1 - 0.085 * d, ty + L * 0.15];
+    poly(curve(edge(0.93, -1), [x1 + 0.02 * L, ty - L * 0.11], up).concat(curve(up, [x1 - 0.045 * d, ty - L * 0.05], notch),
+         curve(notch, [x1 - 0.045 * d, ty + L * 0.05], down), curve(down, [x1 + 0.02 * L, ty + L * 0.11], edge(0.93, 1))));
     ctx.fill(); ctx.restore();
   }
 
