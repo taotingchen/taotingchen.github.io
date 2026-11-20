@@ -11,7 +11,7 @@
   var hero = canvas.parentElement;
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var SHADOW = "rgba(23,63,77,0.10)";
-  var W = 0, H = 0, time = 0, last = 0, mouse = null, caustics = null, schools = [], turtle = null, giant = null, seen = false;
+  var W = 0, H = 0, time = 0, last = 0, mouse = null, caustics = null, schools = [], turtle = null, giant = null, seen = false, running = false, visible = true;
 
   function rnd(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
@@ -216,7 +216,12 @@
   function tick(now) {
     var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
     step(dt); draw();
-    requestAnimationFrame(tick);
+    if (visible) requestAnimationFrame(tick); else running = false;
+  }
+
+  function start() {
+    if (running || reduce) return;
+    running = true; last = 0; requestAnimationFrame(tick);
   }
 
   hero.addEventListener("pointermove", function (e) {
@@ -229,8 +234,17 @@
   hero.addEventListener("pointerleave", function () { mouse = null; });
   window.addEventListener("resize", function () { resize(); if (reduce) draw(); });
 
-  caustics = makeCaustics();
+  // Paint plain water at once, then build the ripple texture and start moving
+  // after the page has rendered. The loop stops while the hero is off screen.
   resize();
-  if (location.hash === "#deep") summon();
-  if (reduce) draw(); else requestAnimationFrame(tick);
+  draw();
+  setTimeout(function () {
+    caustics = makeCaustics();
+    if (location.hash === "#deep") summon();
+    if (reduce) draw(); else start();
+  }, 0);
+  if (window.IntersectionObserver) new IntersectionObserver(function (es) {
+    visible = es[es.length - 1].isIntersecting;
+    if (visible && caustics) start();
+  }).observe(hero);
 })();
