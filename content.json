@@ -455,8 +455,8 @@
           "zh": "參賽隊伍第 4 名"
         },
         "detail": {
-          "en": "Closed-loop end-to-end driving challenge hosted by NVIDIA. 5th on the public leaderboard, which also lists the organizer's own entry. Team ACM_Lab_D_Team.",
-          "zh": "NVIDIA 主辦的閉迴路端到端自動駕駛挑戰賽。公開排行榜含主辦方自己的參考成績，列第 5。隊伍名稱 ACM_Lab_D_Team。"
+          "en": "Closed-loop end-to-end driving challenge hosted by NVIDIA, part of the World Models in Physical AI workshop at NeurIPS 2026. 5th on the public leaderboard, which also lists the organizer's own entry. Team ACM_Lab_D_Team.",
+          "zh": "NVIDIA 主辦的閉迴路端到端自動駕駛挑戰賽，屬於 NeurIPS 2026 的 World Models in Physical AI workshop。公開排行榜含主辦方自己的參考成績，列第 5。隊伍名稱 ACM_Lab_D_Team。"
         },
         "year": "2026",
         "link": "https://huggingface.co/spaces/nvidia/AlpasimE2EClosedLoopChallenge2026"
