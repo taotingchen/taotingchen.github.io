@@ -511,7 +511,6 @@ def build(lang):
         + section("research", res["heading"], listing(pubs))
         + section("awards", C["awards"]["heading"], listing(awards))
         + section("blog", ui["nav_blog"], blog_home)
-        + section("picks", pk["heading"], picks_home)
         + section("experience", C["experience"]["heading"], listing(experience))
         + section("education", C["education"]["heading"], listing(education))
         + section("contact", contact["heading"], f"""
