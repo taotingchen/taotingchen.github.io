@@ -102,6 +102,7 @@ a:hover { color: var(--accent); text-decoration-color: var(--accent); }
 .more-btn { margin-top: 10px; }
 .view-all { margin-top: 10px; }
 .intro { color: var(--muted); margin-bottom: 8px; }
+#try .chips { margin: 22px 0 8px; }
 [hidden] { display: none !important; }
 
 /* Project and blog pages */

@@ -5,24 +5,27 @@
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Work: filter by topic, and reveal the projects past the first few
-  var chips = document.querySelectorAll(".chip"), moreBtn = document.querySelector("[data-more]"), expanded = false, topic = "";
-  function applyFilter() {
-    document.querySelectorAll("#work [data-topics]").forEach(function (el) {
-      var match = !topic || el.getAttribute("data-topics").split("|").indexOf(topic) >= 0;
-      el.hidden = !match || (!topic && !expanded && el.classList.contains("extra"));
+  // Work and To try: filter by topic, and reveal the items past the first few. Each section keeps its own state.
+  document.querySelectorAll("section").forEach(function (sec) {
+    if (!sec.querySelector("[data-topics]")) return;
+    var chips = sec.querySelectorAll(".chip"), moreBtn = sec.querySelector("[data-more]"), expanded = false, topic = "";
+    function applyFilter() {
+      sec.querySelectorAll("[data-topics]").forEach(function (el) {
+        var match = !topic || el.getAttribute("data-topics").split("|").indexOf(topic) >= 0;
+        el.hidden = !match || (!topic && !expanded && el.classList.contains("extra"));
+      });
+      if (moreBtn) moreBtn.hidden = expanded || !!topic;
+    }
+    chips.forEach(function (c) {
+      c.addEventListener("click", function () {
+        topic = c.getAttribute("data-topic");
+        chips.forEach(function (o) { o.setAttribute("aria-pressed", o === c ? "true" : "false"); });
+        applyFilter();
+      });
     });
-    if (moreBtn) moreBtn.hidden = expanded || !!topic;
-  }
-  chips.forEach(function (c) {
-    c.addEventListener("click", function () {
-      topic = c.getAttribute("data-topic");
-      chips.forEach(function (o) { o.setAttribute("aria-pressed", o === c ? "true" : "false"); });
-      applyFilter();
-    });
+    if (moreBtn) moreBtn.addEventListener("click", function () { expanded = true; applyFilter(); });
+    applyFilter();
   });
-  if (moreBtn) moreBtn.addEventListener("click", function () { expanded = true; applyFilter(); });
-  applyFilter();
 
   // Search: Ctrl+K or the nav button. The index is fetched the first time it opens.
   var dlg = document.querySelector("dialog.search");

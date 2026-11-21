@@ -614,9 +614,30 @@
           }
         ],
         "added": "2026-11",
-        "state": "todo"
+        "state": "todo",
+        "categories": [
+          "hardware"
+        ]
       }
-    ]
+    ],
+    "categories": {
+      "software": {
+        "en": "Software",
+        "zh": "軟體"
+      },
+      "hardware": {
+        "en": "Hardware",
+        "zh": "硬體"
+      },
+      "security": {
+        "en": "Security",
+        "zh": "資安"
+      },
+      "ai": {
+        "en": "AI",
+        "zh": "人工智慧"
+      }
+    }
   },
   "experience": {
     "heading": {

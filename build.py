@@ -23,6 +23,7 @@ LANGS = {"en": {"dir": "", "html_lang": "en", "other": "zh", "other_label": "中
          "zh": {"dir": "zh/", "html_lang": "zh-Hant", "other": "en", "other_label": "EN"}}
 SITE = C["site"].get("url", "").rstrip("/")
 SHOWN = 4  # projects visible before "Show more"
+TRY_SHOWN = 6  # same for the To try list
 
 
 def asset_version():
@@ -373,14 +374,30 @@ def build(lang):
     index += [{"t": tr(a["title"], lang), "d": tr(a["result"], lang), "k": tr(C["awards"]["heading"], lang), "u": abs_home + "#awards"} for a in live(C["awards"]["items"])]
 
     tr_ = C.get("try", {"items": []})
-    trying = "".join(f"""
-      <li class="item{todo(x)}">
+    cats = tr_.get("categories", {})
+    try_items = live(tr_["items"])
+
+    def try_row(i, x):
+        mine = [c for c in x.get("categories", []) if c in cats]
+        extra = " extra" if i >= TRY_SHOWN else ""
+        links = [f'<a href="{html.escape(l["url"], quote=True)}" target="_blank" rel="noopener">{html.escape(l["label"])}</a>' for l in x.get("links", [])]
+        return f"""
+      <li class="item{todo(x)}{extra}" data-topics="{"|".join(mine)}">
         <h3>{t(x["title"])}</h3>
         <p>{t(x["detail"])}</p>
-        <p class="meta">{" · ".join([t(tr_["status"][x.get("state", "todo")]), x["added"]] + [f'<a href="{html.escape(l["url"], quote=True)}" target="_blank" rel="noopener">{html.escape(l["label"])}</a>' for l in x.get("links", [])])}</p>
-      </li>""" for x in live(tr_["items"]))
-    index += [{"t": tr(x["title"], lang), "d": tr(x["detail"], lang), "k": tr(tr_["heading"], lang), "u": abs_home + "#try"} for x in live(tr_["items"])]
-    try_html = (f'\n    <p class="intro">{t(tr_["intro"])}</p>' + listing(trying)) if trying else ""
+        <p class="meta">{" · ".join([t(cats[c]) for c in mine] + [t(tr_["status"][x.get("state", "todo")]), x["added"]] + links)}</p>
+      </li>"""
+    trying = "".join(try_row(i, x) for i, x in enumerate(try_items))
+    index += [{"t": tr(x["title"], lang), "d": tr(x["detail"], lang), "k": tr(tr_["heading"], lang), "u": abs_home + "#try"} for x in try_items]
+    used = [c for c in cats if any(c in x.get("categories", []) for x in try_items)]
+    try_chips = ""
+    if len(try_items) >= 3 and len(used) >= 2:
+        try_chips = f'\n    <div class="chips" role="group" aria-label="{t(ui["filter"])}">' + \
+                    f'<button type="button" class="chip" data-topic="" aria-pressed="true">{t(ui["all"])}</button>' + \
+                    "".join(f'<button type="button" class="chip" data-topic="{c}" aria-pressed="false">{t(cats[c])}</button>' for c in used) + "</div>"
+    try_more = max(0, len(try_items) - TRY_SHOWN)
+    try_more_btn = f'\n    <button type="button" class="more-btn" data-more>{t(ui["more"]).replace("{n}", str(try_more))}</button>' if try_more else ""
+    try_html = (f'\n    <p class="intro">{t(tr_["intro"])}</p>' + try_chips + listing(trying) + try_more_btn) if trying else ""
 
     def rows_of(items):
         return "".join(f"""
