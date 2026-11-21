@@ -101,6 +101,7 @@ a:hover { color: var(--accent); text-decoration-color: var(--accent); }
 .featured + .list { margin-top: 44px; }
 .more-btn { margin-top: 10px; }
 .view-all { margin-top: 10px; }
+.intro { color: var(--muted); margin-bottom: 8px; }
 [hidden] { display: none !important; }
 
 /* Project and blog pages */

@@ -235,6 +235,10 @@
       {
         "en": "My research is on end-to-end planning for autonomous driving with vision-language-action models, and on making these models fast enough to run in real time on edge hardware.",
         "zh": "我研究以視覺-語言-動作模型進行端到端自動駕駛規劃，以及如何讓這類模型在邊緣裝置上達到即時推論。"
+      },
+      {
+        "en": "Outside research I am a maker. I like trying interesting technology with my own hands, and I keep a list of what I want to build next under To try.",
+        "zh": "研究之外，我也是個 Maker，喜歡親手體驗各種有趣的技術。接下來想動手做的東西，我整理在「待體驗」。"
       }
     ],
     "skills_heading": {
@@ -567,6 +571,50 @@
         },
         "year": "2025",
         "link": "#"
+      }
+    ]
+  },
+  "try": {
+    "heading": {
+      "en": "To try",
+      "zh": "待體驗"
+    },
+    "intro": {
+      "en": "Things I found online and want to try myself. When I get to one, I will post photos or a video, what I learned and what went wrong.",
+      "zh": "在網路上看到、想親手試試的東西。做了之後會在這裡放上照片或影片，還有心得和踩到的雷。"
+    },
+    "status": {
+      "todo": {
+        "en": "Not started",
+        "zh": "還沒開始"
+      },
+      "doing": {
+        "en": "In progress",
+        "zh": "進行中"
+      },
+      "done": {
+        "en": "Done",
+        "zh": "完成"
+      }
+    },
+    "items": [
+      {
+        "title": {
+          "en": "Burning pictures onto optical discs, then adding Fourier optics",
+          "zh": "把圖案燒進光碟，再加上傅立葉光學"
+        },
+        "detail": {
+          "en": "DiscImageStudio converts an image into disc data, so that after burning, the picture is visible on the surface of a CD, DVD or single-layer Blu-ray. A disc is also a diffraction grating. I want to shine a laser on a burned pattern and see what it projects, and then try the reverse: design the pattern to burn from the Fourier transform of the image I want to see.",
+          "zh": "DiscImageStudio 會把圖片轉成光碟資料，燒錄後就能在 CD、DVD 或單層藍光的盤面上看到圖案。光碟本身也是一片繞射光柵，所以我想用雷射照燒出來的圖案，看它會投影出什麼；再反過來試試，從想看到的影像做傅立葉轉換，設計出要燒的圖案。"
+        },
+        "links": [
+          {
+            "label": "DiscImageStudio",
+            "url": "https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio"
+          }
+        ],
+        "added": "2026-11",
+        "state": "todo"
       }
     ]
   },

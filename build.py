@@ -372,6 +372,16 @@ def build(lang):
       </li>""" for a in live(C["awards"]["items"]))
     index += [{"t": tr(a["title"], lang), "d": tr(a["result"], lang), "k": tr(C["awards"]["heading"], lang), "u": abs_home + "#awards"} for a in live(C["awards"]["items"])]
 
+    tr_ = C.get("try", {"items": []})
+    trying = "".join(f"""
+      <li class="item{todo(x)}">
+        <h3>{t(x["title"])}</h3>
+        <p>{t(x["detail"])}</p>
+        <p class="meta">{" · ".join([t(tr_["status"][x.get("state", "todo")]), x["added"]] + [f'<a href="{html.escape(l["url"], quote=True)}" target="_blank" rel="noopener">{html.escape(l["label"])}</a>' for l in x.get("links", [])])}</p>
+      </li>""" for x in live(tr_["items"]))
+    index += [{"t": tr(x["title"], lang), "d": tr(x["detail"], lang), "k": tr(tr_["heading"], lang), "u": abs_home + "#try"} for x in live(tr_["items"])]
+    try_html = (f'\n    <p class="intro">{t(tr_["intro"])}</p>' + listing(trying)) if trying else ""
+
     def rows_of(items):
         return "".join(f"""
       <li class="item{todo(e)}">
@@ -392,6 +402,8 @@ def build(lang):
     email = contact.get("email", "")
     email_html = f'\n    <p><a class="email" href="mailto:{t(email)}">{t(email)}</a></p>' if email and "example.com" not in email else ""
     bio = "".join(f"<p>{t(p)}</p>" for p in about["bio"])
+    if try_html:  # the bio mentions the To try list by name; link it
+        bio = bio.replace(t(tr_["heading"]), f'<a href="#try">{t(tr_["heading"])}</a>', 1)
     root = "../" if L["dir"] else ""
     cv = f'\n        <a href="{root}assets/cv.pdf">{t(hero["cta_cv"])}</a>' if (ROOT / "assets/cv.pdf").exists() else ""
     work_btn = f'\n        <a class="btn" href="#work">{t(hero["cta_work"])}</a>' if work_html else ""
@@ -413,6 +425,7 @@ def build(lang):
         + section("research", res["heading"], listing(pubs))
         + section("awards", C["awards"]["heading"], listing(awards))
         + section("blog", ui["nav_blog"], blog_home)
+        + (section("try", tr_["heading"], try_html) if try_html else "")
         + section("experience", C["experience"]["heading"], listing(experience))
         + section("education", C["education"]["heading"], listing(education))
         + section("contact", contact["heading"], f"""
