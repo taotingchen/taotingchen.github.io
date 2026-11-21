@@ -664,7 +664,11 @@
           "hardware"
         ],
         "state": "want",
-        "added": "2026-11-21"
+        "added": "2026-11-21",
+        "readme": {
+          "en": "https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio/blob/main/README.en.md",
+          "zh": "https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio/blob/main/README.zh-TW.md"
+        }
       }
     ]
   },
