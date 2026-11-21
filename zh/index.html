@@ -52,7 +52,6 @@
 
   <section id="work" class="section">
     <h2>作品</h2>
-    <div class="chips" role="group" aria-label="依主題篩選"><button type="button" class="chip" data-topic="" aria-pressed="true">全部</button><button type="button" class="chip" data-topic="Autonomous driving" aria-pressed="false">自動駕駛</button><button type="button" class="chip" data-topic="Efficiency" aria-pressed="false">效率</button><button type="button" class="chip" data-topic="Language models" aria-pressed="false">語言模型</button><button type="button" class="chip" data-topic="Agents" aria-pressed="false">代理</button><button type="button" class="chip" data-topic="Robotics" aria-pressed="false">機器人</button></div>
     <article class="featured" data-topics="Autonomous driving|Efficiency">
       <h3><a href="projects/simlingo-ets2/">SimLingo × 歐洲卡車模擬 2</a></h3>
       <p>以微調後的 InternVL2-1B 視覺-語言-動作模型，直接從螢幕畫面駕駛《歐洲卡車模擬 2》。我逐段分析推論流程，在單張消費級 GPU 上將每幀延遲從 691 ms 降到 56.9 ms。</p>
@@ -64,16 +63,6 @@
       <p><a class="more" href="projects/simlingo-ets2/">閱讀完整說明 →</a></p>
     </article>
     <ul class="list">
-      <li class="item" data-topics="Language models|Efficiency">
-        <h3>Parameter Golf</h3>
-        <p>參加 OpenAI Parameter Golf 挑戰的實驗環境：在 16 MB 的檔案大小限制內訓練出最好的語言模型，並以自動化流程提出訓練程式的修改、保留有改善的版本。</p>
-        <p class="meta">Quantization · Muon · Agents · 2026</p>
-      </li>
-      <li class="item" data-topics="Language models|Agents">
-        <h3>LLM Wiki</h3>
-        <p>由 LLM 代理維護的個人研究知識庫，涵蓋自動駕駛、機器人與 3D 重建。</p>
-        <p class="meta">Agents · Obsidian · 2026</p>
-      </li>
       <li class="item" data-topics="Robotics">
         <h3>寫作業機器人</h3>
         <p>讀取題目照片並產生解答，模仿手寫風格後轉成 G-code，由改裝的 3D 列印機握筆寫在紙上。全程在 Jetson Nano 上執行，不依賴雲端。</p>

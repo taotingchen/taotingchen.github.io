@@ -52,7 +52,6 @@
 
   <section id="work" class="section">
     <h2>Work</h2>
-    <div class="chips" role="group" aria-label="Filter by topic"><button type="button" class="chip" data-topic="" aria-pressed="true">All</button><button type="button" class="chip" data-topic="Autonomous driving" aria-pressed="false">Autonomous driving</button><button type="button" class="chip" data-topic="Efficiency" aria-pressed="false">Efficiency</button><button type="button" class="chip" data-topic="Language models" aria-pressed="false">Language models</button><button type="button" class="chip" data-topic="Agents" aria-pressed="false">Agents</button><button type="button" class="chip" data-topic="Robotics" aria-pressed="false">Robotics</button></div>
     <article class="featured" data-topics="Autonomous driving|Efficiency">
       <h3><a href="projects/simlingo-ets2/">SimLingo × Euro Truck Simulator 2</a></h3>
       <p>A fine-tuned InternVL2-1B vision-language-action model that drives a truck in Euro Truck Simulator 2 from screen pixels. I profiled each stage of the pipeline and reduced inference latency from 691 ms to 56.9 ms per frame on a single consumer GPU.</p>
@@ -64,16 +63,6 @@
       <p><a class="more" href="projects/simlingo-ets2/">Read the write-up →</a></p>
     </article>
     <ul class="list">
-      <li class="item" data-topics="Language models|Efficiency">
-        <h3>Parameter Golf</h3>
-        <p>My entry setup for OpenAI&#x27;s Parameter Golf challenge: training the best language model that fits in a 16 MB file, with an automated loop that proposes changes to the training script and keeps the ones that improve the score.</p>
-        <p class="meta">Quantization · Muon · Agents · 2026</p>
-      </li>
-      <li class="item" data-topics="Language models|Agents">
-        <h3>LLM Wiki</h3>
-        <p>A personal research knowledge base maintained by an LLM agent, covering autonomous driving, robotics and 3D reconstruction.</p>
-        <p class="meta">Agents · Obsidian · 2026</p>
-      </li>
       <li class="item" data-topics="Robotics">
         <h3>Homework-writing robot</h3>
         <p>Reads a photographed worksheet, generates the answers, imitates a handwriting style and writes them on paper with a pen held by a modified 3D printer. Runs on a Jetson Nano without the cloud.</p>
