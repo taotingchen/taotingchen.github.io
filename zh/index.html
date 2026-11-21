@@ -16,9 +16,9 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="../assets/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/style.css?v=57e043f4">
+<link rel="stylesheet" href="../assets/style.css?v=3a54348a">
 </head>
-<body data-search="../assets/search-zh.json?v=57e043f4" data-root="../">
+<body data-search="../assets/search-zh.json?v=3a54348a" data-root="../">
 <a class="skip" href="#main">跳到主要內容</a>
 
 <header class="nav">
@@ -26,6 +26,7 @@
   <nav aria-label="Primary">
     <a href="#work">作品</a>
     <a href="#research">論文</a>
+    <a href="../zh/picks/">嚴選</a>
     <a href="#contact">聯絡</a>
     <button class="search-btn" type="button" data-search-open aria-label="搜尋">搜尋 <kbd>Ctrl K</kbd></button>
     <a class="lang" href="../" hreflang="en">EN</a>
@@ -46,7 +47,7 @@
 
   <section id="about" class="section">
     <h2>關於我</h2>
-    <div class="bio"><p>我是國立陽明交通大學資訊科學與工程研究所的博士生，指導教授為黃敬群教授。</p><p>我研究以視覺-語言-動作模型進行端到端自動駕駛規劃，以及如何讓這類模型在邊緣裝置上達到即時推論。</p><p>研究之外，我也是個 Maker，喜歡親手體驗各種有趣的技術。接下來想動手做的東西，我整理在「<a href="#try">待體驗</a>」。</p></div>
+    <div class="bio"><p>我是國立陽明交通大學資訊科學與工程研究所的博士生，指導教授為黃敬群教授。</p><p>我研究以視覺-語言-動作模型進行端到端自動駕駛規劃，以及如何讓這類模型在邊緣裝置上達到即時推論。</p><p>研究之外，我也是個 Maker，喜歡親手體驗各種有趣的技術。我把在網路上看到的好東西整理在「<a href="picks/">嚴選</a>」，玩過之後會分享心得和踩到的雷。</p></div>
     <p class="meta">PyTorch · VLM / VLA · NAVSIM · CARLA · Bench2Drive · Token pruning · Neural architecture search · NVIDIA Jetson</p>
   </section>
 
@@ -106,16 +107,13 @@
     </ul>
   </section>
 
-  <section id="try" class="section">
-    <h2>待體驗</h2>
-    <p class="intro">在網路上看到、想親手試試的東西。做了之後會在這裡放上照片或影片，還有心得和踩到的雷。</p>
-    <ul class="list">
-      <li class="item" data-topics="hardware">
-        <h3>把圖案燒進光碟，再加上傅立葉光學</h3>
-        <p>DiscImageStudio 會把圖片轉成光碟資料，燒錄後就能在 CD、DVD 或單層藍光的盤面上看到圖案。光碟本身也是一片繞射光柵，所以我想用雷射照燒出來的圖案，看它會投影出什麼；再反過來試試，從想看到的影像做傅立葉轉換，設計出要燒的圖案。</p>
-        <p class="meta">硬體 · 還沒開始 · 2026-11 · <a href="https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio" target="_blank" rel="noopener">DiscImageStudio</a></p>
-      </li>
+  <section id="picks" class="section">
+    <h2>嚴選</h2>
+    <p class="intro">我在網路上看到、挑出來的有趣專案。這些都不是我做的，每一項都標明作者並連到原專案。親手玩過之後，我會補上照片或影片、心得和踩到的雷。</p>
+    <ul class="tiles">
+      <li><a class="tile" href="picks/#discimagestudio"><img src="../assets/picks/discimagestudio/cover.jpg" alt="" loading="lazy" decoding="async"><span class="tile-name">DiscImageStudio</span><span class="tile-text">把圖片轉成光碟資料，燒錄後在 CD、DVD 或單層藍光的盤面上就看得到圖案。</span></a></li>
     </ul>
+    <p class="view-all"><a class="more" href="picks/">看全部 1 項 →</a></p>
   </section>
 
   <section id="experience" class="section">
@@ -169,6 +167,6 @@
   <input type="search" placeholder="搜尋作品、論文、文章" aria-label="搜尋" autocomplete="off">
   <ul class="results" data-empty="找不到結果"></ul>
 </dialog>
-<script src="../assets/main.js?v=57e043f4" defer></script>
+<script src="../assets/main.js?v=3a54348a" defer></script>
 </body>
 </html>

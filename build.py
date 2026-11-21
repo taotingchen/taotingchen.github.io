@@ -23,7 +23,6 @@ LANGS = {"en": {"dir": "", "html_lang": "en", "other": "zh", "other_label": "中
          "zh": {"dir": "zh/", "html_lang": "zh-Hant", "other": "en", "other_label": "EN"}}
 SITE = C["site"].get("url", "").rstrip("/")
 SHOWN = 4  # projects visible before "Show more"
-TRY_SHOWN = 6  # same for the To try list
 
 
 def asset_version():
@@ -35,6 +34,31 @@ def asset_version():
 
 
 VERSION = asset_version()
+
+# ---------- GitHub repo cards for Picks ----------
+# Repo facts (stars, language, licence) are fetched once and kept in picks-cache.json,
+# so ordinary builds work offline. `python3 build.py --refresh` fetches them again.
+CACHE = ROOT / "picks-cache.json"
+
+
+def repo_info(repo):
+    cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
+    if repo not in cache or "--refresh" in sys.argv:
+        import urllib.request
+        try:
+            req = urllib.request.Request(f"https://api.github.com/repos/{repo}",
+                                         headers={"User-Agent": "static-site-build", "Accept": "application/vnd.github+json"})
+            d = json.load(urllib.request.urlopen(req, timeout=10))
+            cache[repo] = {"description": d.get("description") or "", "stars": d.get("stargazers_count", 0),
+                           "language": d.get("language") or "", "license": (d.get("license") or {}).get("spdx_id") or ""}
+            CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        except Exception as e:  # offline: build the card without numbers
+            print(f"could not fetch {repo}: {e}")
+    return cache.get(repo, {})
+
+
+def stars(n):
+    return f"{n / 1000:.1f}k".replace(".0k", "k") if n >= 1000 else str(n)
 
 
 def live(items):
@@ -155,7 +179,7 @@ def shell(lang, depth, path, title, desc, main, has):
     here = "" if not path else None  # on the home page, section links stay on the page
     sec = (lambda sid: f"#{sid}") if here == "" else (lambda sid: f"{home}#{sid}")
     nav = [(sec("work"), ui["nav_work"], has["work"]), (sec("research"), ui["nav_research"], has["research"]),
-           (f"{home}blog/", ui["nav_blog"], has["blog"]), (sec("contact"), ui["nav_contact"], True)]
+           (f"{home}picks/", ui["nav_picks"], has.get("picks")), (f"{home}blog/", ui["nav_blog"], has["blog"]), (sec("contact"), ui["nav_contact"], True)]
     nav_html = "".join(f'\n    <a href="{href}">{t(label)}</a>' for href, label, shown in nav if shown)
     other = root + LANGS[L["other"]]["dir"] + path
     og = f'\n<meta property="og:image" content="{SITE}/assets/og.png">\n<meta name="twitter:card" content="summary_large_image">' if (ROOT / "assets/og.png").exists() else ""
@@ -373,31 +397,64 @@ def build(lang):
       </li>""" for a in live(C["awards"]["items"]))
     index += [{"t": tr(a["title"], lang), "d": tr(a["result"], lang), "k": tr(C["awards"]["heading"], lang), "u": abs_home + "#awards"} for a in live(C["awards"]["items"])]
 
-    tr_ = C.get("try", {"items": []})
-    cats = tr_.get("categories", {})
-    try_items = live(tr_["items"])
+    pk = C.get("picks", {"items": []})
+    cats = pk.get("categories", {})
+    pick_items = sorted(live(pk["items"]), key=lambda x: x["added"], reverse=True)
+    rootp = "../" * (1 + (1 if L["dir"] else 0))  # from picks/ back to the site root, for assets
 
-    def try_row(i, x):
+    def repo_card(x):
+        if not x.get("repo"):
+            return f'<p class="meta"><a href="{html.escape(x["url"], quote=True)}" target="_blank" rel="noopener">{html.escape(x["url"])}</a></p>'
+        info = repo_info(x["repo"])
+        facts = [f for f in (f'★ {stars(info["stars"])}' if info.get("stars") else "", info.get("language", ""), info.get("license", "")) if f]
+        return f"""<a class="repo" href="{html.escape(x["url"], quote=True)}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span class="repo-name">{html.escape(x["repo"])}</span>
+          <span class="repo-facts">{" · ".join(html.escape(f) for f in facts)}</span>
+        </a>"""
+
+    def pick_full(x, i):
         mine = [c for c in x.get("categories", []) if c in cats]
-        extra = " extra" if i >= TRY_SHOWN else ""
-        links = [f'<a href="{html.escape(l["url"], quote=True)}" target="_blank" rel="noopener">{html.escape(l["label"])}</a>' for l in x.get("links", [])]
+        imgs = "".join(f'<img src="{rootp}{html.escape(im["src"])}" alt="{t(im["alt"])}" loading="lazy" decoding="async">' for im in x.get("images", []))
+        fig = f'\n        <figure class="shots">{imgs}<figcaption>{t(pk["credit"])}</figcaption></figure>' if imgs else ""
+        note = f'\n        <p class="note"><strong>{t(pk["note_label"])}</strong>{t(x["note"])}</p>' if x.get("note") else ""
+        extra = " extra" if i >= 12 else ""
         return f"""
-      <li class="item{todo(x)}{extra}" data-topics="{"|".join(mine)}">
-        <h3>{t(x["title"])}</h3>
-        <p>{t(x["detail"])}</p>
-        <p class="meta">{" · ".join([t(cats[c]) for c in mine] + [t(tr_["status"][x.get("state", "todo")]), x["added"]] + links)}</p>
+      <li class="pick{todo(x)}{extra}" id="{x["slug"]}" data-topics="{"|".join(mine)}">{fig}
+        <h3><a href="{html.escape(x["url"], quote=True)}" target="_blank" rel="noopener">{html.escape(x["name"])}</a> <span class="by">{t(pk["by"])} {html.escape(x["by"])}</span></h3>
+        <p>{t(x["summary"])}</p>{note}
+        {repo_card(x)}
+        <p class="meta">{" · ".join([t(cats[c]) for c in mine] + [t(pk["status"][x.get("state", "want")]), x["added"]])}</p>
       </li>"""
-    trying = "".join(try_row(i, x) for i, x in enumerate(try_items))
-    index += [{"t": tr(x["title"], lang), "d": tr(x["detail"], lang), "k": tr(tr_["heading"], lang), "u": abs_home + "#try"} for x in try_items]
-    used = [c for c in cats if any(c in x.get("categories", []) for x in try_items)]
-    try_chips = ""
-    if len(try_items) >= 3 and len(used) >= 2:
-        try_chips = f'\n    <div class="chips" role="group" aria-label="{t(ui["filter"])}">' + \
-                    f'<button type="button" class="chip" data-topic="" aria-pressed="true">{t(ui["all"])}</button>' + \
-                    "".join(f'<button type="button" class="chip" data-topic="{c}" aria-pressed="false">{t(cats[c])}</button>' for c in used) + "</div>"
-    try_more = max(0, len(try_items) - TRY_SHOWN)
-    try_more_btn = f'\n    <button type="button" class="more-btn" data-more>{t(ui["more"]).replace("{n}", str(try_more))}</button>' if try_more else ""
-    try_html = (f'\n    <p class="intro">{t(tr_["intro"])}</p>' + try_chips + listing(trying) + try_more_btn) if trying else ""
+
+    def pick_tile(x):
+        im = x.get("images", [])
+        img = f'<img src="{"../" if L["dir"] else ""}{html.escape(im[0]["src"])}" alt="" loading="lazy" decoding="async">' if im else '<span class="tile-blank"></span>'
+        return f"""
+      <li><a class="tile" href="picks/#{x["slug"]}">{img}<span class="tile-name">{html.escape(x["name"])}</span><span class="tile-text">{t(x["summary"])}</span></a></li>"""
+
+    picks_home = ""
+    if pick_items:
+        used = [c for c in cats if any(c in x.get("categories", []) for x in pick_items)]
+        chips_p = ""
+        if len(pick_items) >= 3 and len(used) >= 2:
+            chips_p = f'\n    <div class="chips" role="group" aria-label="{t(ui["filter"])}">' + \
+                      f'<button type="button" class="chip" data-topic="" aria-pressed="true">{t(ui["all"])}</button>' + \
+                      "".join(f'<button type="button" class="chip" data-topic="{c}" aria-pressed="false">{t(cats[c])}</button>' for c in used) + "</div>"
+        more_n = max(0, len(pick_items) - 12)
+        more_p = f'\n    <button type="button" class="more-btn" data-more>{t(ui["more"]).replace("{n}", str(more_n))}</button>' if more_n else ""
+        pages["picks/"] = (f'{t(pk["heading"])} · {name}', t(pk["intro"]), f"""  <section class="page">
+    <p class="back"><a href="../">← {name}</a></p>
+    <h1>{t(pk["heading"])}</h1>
+    <p class="lede">{t(pk["intro"])}</p>{chips_p}
+    <ul class="picks">{"".join(pick_full(x, i) for i, x in enumerate(pick_items))}
+    </ul>{more_p}
+  </section>
+""")
+        shown = pick_items[:pk.get("home_count", 3)]
+        picks_home = (f'\n    <p class="intro">{t(pk["intro"])}</p>\n    <ul class="tiles">{"".join(pick_tile(x) for x in shown)}\n    </ul>'
+                      f'\n    <p class="view-all"><a class="more" href="picks/">{t(pk["view_all"]).replace("{n}", str(len(pick_items)))} →</a></p>')
+        index += [{"t": x["name"], "d": tr(x["summary"], lang), "k": tr(pk["heading"], lang), "u": f'{abs_home}picks/#{x["slug"]}'} for x in pick_items]
 
     def rows_of(items):
         return "".join(f"""
@@ -419,8 +476,8 @@ def build(lang):
     email = contact.get("email", "")
     email_html = f'\n    <p><a class="email" href="mailto:{t(email)}">{t(email)}</a></p>' if email and "example.com" not in email else ""
     bio = "".join(f"<p>{t(p)}</p>" for p in about["bio"])
-    if try_html:  # the bio mentions the To try list by name; link it
-        bio = bio.replace(t(tr_["heading"]), f'<a href="#try">{t(tr_["heading"])}</a>', 1)
+    if picks_home:  # the bio mentions Picks by name; link it
+        bio = bio.replace(t(pk["heading"]), f'<a href="picks/">{t(pk["heading"])}</a>', 1)
     root = "../" if L["dir"] else ""
     cv = f'\n        <a href="{root}assets/cv.pdf">{t(hero["cta_cv"])}</a>' if (ROOT / "assets/cv.pdf").exists() else ""
     work_btn = f'\n        <a class="btn" href="#work">{t(hero["cta_work"])}</a>' if work_html else ""
@@ -442,7 +499,7 @@ def build(lang):
         + section("research", res["heading"], listing(pubs))
         + section("awards", C["awards"]["heading"], listing(awards))
         + section("blog", ui["nav_blog"], blog_home)
-        + (section("try", tr_["heading"], try_html) if try_html else "")
+        + section("picks", pk["heading"], picks_home)
         + section("experience", C["experience"]["heading"], listing(experience))
         + section("education", C["education"]["heading"], listing(education))
         + section("contact", contact["heading"], f"""
@@ -450,7 +507,7 @@ def build(lang):
     <ul class="links">{links}</ul>"""))
     pages[""] = (t(C["site"]["title"]), t(C["site"]["description"]), home)
 
-    has = {"work": bool(work_html), "research": bool(pubs), "blog": bool(plist)}
+    has = {"work": bool(work_html), "research": bool(pubs), "blog": bool(plist), "picks": bool(picks_home)}
     base_depth = 1 if L["dir"] else 0
     for path, (title, desc, main) in pages.items():
         out = ROOT / L["dir"] / path / "index.html"
