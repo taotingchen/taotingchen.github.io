@@ -419,22 +419,31 @@ def build(lang):
     def pick_full(x, i):
         mine = [c for c in x.get("categories", []) if c in cats]
         imgs = "".join(f'<img src="{rootp}{html.escape(im["src"])}" alt="{t(im["alt"])}" loading="lazy" decoding="async">' for im in x.get("images", []))
-        fig = f'\n        <figure class="shots">{imgs}<figcaption>{t(pk["credit"])}</figcaption></figure>' if imgs else ""
+        fig = f'\n        <figure class="shots">{imgs}<figcaption>{t(x.get("credit", pk["credit"]))}</figcaption></figure>' if imgs else ""
+        how = "".join(f"<li>{t(h)}</li>" for h in x.get("how", []))
+        how = f'\n        <h4>{t(pk["how_label"])}</h4>\n        <ol class="how">{how}</ol>' if how else ""
+        c = x.get("cite")
+        cite = ""
+        if c:
+            doi = f' <a href="https://doi.org/{html.escape(c["doi"])}" target="_blank" rel="noopener">doi:{html.escape(c["doi"])}</a>' if c.get("doi") else ""
+            links = " · ".join(f'<a href="{html.escape(l["url"], quote=True)}" target="_blank" rel="noopener">{t(l["label"])}</a>' for l in c.get("links", []))
+            cite = f'\n        <div class="cite"><h4>{t(pk["cite_label"])}</h4><p>{t(c["text"])}{doi}</p>' + (f'<p class="cite-links">{links}</p>' if links else "") + "</div>"
         note = f'\n        <p class="note"><strong>{t(pk["note_label"])}</strong>{t(x["note"])}</p>' if x.get("note") else ""
         extra = " extra" if i >= 12 else ""
         return f"""
       <li class="pick{todo(x)}{extra}" id="{x["slug"]}" data-topics="{"|".join(mine)}">{fig}
-        <h3><a href="{src(x)}" target="_blank" rel="noopener">{html.escape(x["name"])}</a> <span class="by">{t(pk["by"])} {html.escape(x["by"])}</span></h3>
-        <p>{t(x["summary"])}</p>{note}
-        {repo_card(x)}
+        <h3><a href="{src(x)}" target="_blank" rel="noopener">{t(x["name"])}</a> <span class="by">{t(pk["by"])} {html.escape(x["by"])}</span></h3>
+        <p>{t(x["summary"])}</p>{note}{how}
+        {repo_card(x)}{cite}
         <p class="meta">{" · ".join([t(cats[c]) for c in mine] + [t(pk["status"][x.get("state", "want")]), x["added"]])}</p>
       </li>"""
 
     def pick_tile(x):
         im = x.get("images", [])
-        img = f'<img src="{"../" if L["dir"] else ""}{html.escape(im[0]["src"])}" alt="" loading="lazy" decoding="async">' if im else '<span class="tile-blank"></span>'
+        thumb = x.get("thumb") or (im[0]["src"] if im else "")
+        img = f'<img src="{"../" if L["dir"] else ""}{html.escape(thumb)}" alt="" loading="lazy" decoding="async">' if im else '<span class="tile-blank"></span>'
         return f"""
-      <li><a class="tile" href="picks/#{x["slug"]}">{img}<span class="tile-name">{html.escape(x["name"])}</span><span class="tile-text">{t(x["summary"])}</span></a></li>"""
+      <li><a class="tile" href="picks/#{x["slug"]}">{img}<span class="tile-name">{t(x["name"])}</span><span class="tile-text">{t(x["summary"])}</span></a></li>"""
 
     picks_home = ""
     if pick_items:
@@ -457,7 +466,7 @@ def build(lang):
         shown = pick_items[:pk.get("home_count", 3)]
         picks_home = (f'\n    <p class="intro">{t(pk["intro"])}</p>\n    <ul class="tiles">{"".join(pick_tile(x) for x in shown)}\n    </ul>'
                       f'\n    <p class="view-all"><a class="more" href="picks/">{t(pk["view_all"]).replace("{n}", str(len(pick_items)))} →</a></p>')
-        index += [{"t": x["name"], "d": tr(x["summary"], lang), "k": tr(pk["heading"], lang), "u": f'{abs_home}picks/#{x["slug"]}'} for x in pick_items]
+        index += [{"t": tr(x["name"], lang), "d": tr(x["summary"], lang), "k": tr(pk["heading"], lang), "u": f'{abs_home}picks/#{x["slug"]}'} for x in pick_items]
 
     def rows_of(items):
         return "".join(f"""

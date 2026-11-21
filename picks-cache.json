@@ -4,5 +4,11 @@
     "language": "C#",
     "license": "GPL-3.0",
     "stars": 10416
+  },
+  "mfx-inria/anisotropic_appearance_fabrication": {
+    "description": "This repository contains the source code associated with the paper Orientable Dense Cyclic Infill for Anisotropic Appearance Fabrication",
+    "language": "Python",
+    "license": "BSD-3-Clause",
+    "stars": 40
   }
 }

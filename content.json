@@ -638,6 +638,87 @@
     },
     "items": [
       {
+        "slug": "aniso-infill",
+        "name": {
+          "en": "Brushed-metal shine from a filament 3D printer",
+          "zh": "用一般 3D 印表機印出拉絲金屬光澤"
+        },
+        "by": "Chermain et al., SIGGRAPH 2023",
+        "repo": "mfx-inria/anisotropic_appearance_fabrication",
+        "url": "https://xavierchermain.github.io/fdm_aa/",
+        "summary": {
+          "en": "A research method for printing surfaces that shine like brushed metal, whose highlights move as you tilt them, with a standard FDM printer and glossy filament. The direction of the printed lines makes the surface rough in one direction, and that direction controls how light reflects. The paper gives an algorithm that fills a shape with one continuous, closed path whose lines follow the direction you specify at every point.",
+          "zh": "一個研究方法：用一般的 FDM 3D 印表機和亮面線材，印出像拉絲金屬那樣、轉個角度反光就會移動的表面。原理是擠出線的走向會讓表面在某個方向上比較粗糙，光的反射方向就跟著改變。論文提出一個演算法，用一條連續、封閉的路徑填滿形狀，並讓每一處的線條都朝你指定的方向走。"
+        },
+        "how": [
+          {
+            "en": "Prepare the inputs: the shape as an SVG outline, and a grayscale PNG giving the line direction at each point (brightness maps to an angle from −90° to 90°). An optional second PNG picks a mode per area: along the border, across it, smoothest, or as specified.",
+            "zh": "準備輸入：形狀的 SVG 外框，加一張灰階 PNG 表示每一處的線條方向（亮度對應 −90° 到 90°）。可以再加一張 PNG，替每個區域選擇模式：沿著邊界、垂直邊界、最平滑，或照指定方向。"
+          },
+          {
+            "en": "Run the official code (Python with JAX, CPU or GPU) to generate the path as SVG and G-code. The authors report about 4 minutes for the paper's Figure 1 and about 35 minutes for all results.",
+            "zh": "用官方程式（Python + JAX，CPU 或 GPU 都能跑）產生路徑，輸出 SVG 和 G-code。作者表示重現論文圖 1 約需 4 分鐘，全部結果約 35 分鐘。"
+          },
+          {
+            "en": "Print a single flat layer with glossy (silk or high-gloss) PLA. The included G-code targets a modified Creality CR-10S Pro; the authors used an extrusion factor of 0.9 and recommend a direct-drive extruder.",
+            "zh": "用亮面（絲綢或高光澤）PLA 印一層平板。附的 G-code 是針對改裝過的 Creality CR-10S Pro；作者使用 0.9 的擠出倍率，並建議用直接驅動擠出機。"
+          }
+        ],
+        "cite": {
+          "text": "Xavier Chermain, Cédric Zanni, Jonàs Martínez, Pierre-Alexandre Hugron, Sylvain Lefebvre. 2023. Orientable Dense Cyclic Infill for Anisotropic Appearance Fabrication. ACM Transactions on Graphics 42(4), Article 68 (SIGGRAPH 2023).",
+          "doi": "10.1145/3592412",
+          "links": [
+            {
+              "label": {
+                "en": "Paper (PDF)",
+                "zh": "論文 PDF"
+              },
+              "url": "https://xavierchermain.github.io/data/pdf/Chermain2023Orientable.pdf"
+            },
+            {
+              "label": {
+                "en": "Project page",
+                "zh": "專案頁"
+              },
+              "url": "https://xavierchermain.github.io/fdm_aa/"
+            },
+            {
+              "label": {
+                "en": "Video",
+                "zh": "影片"
+              },
+              "url": "https://youtu.be/aUDzZrlRnNU"
+            },
+            {
+              "label": {
+                "en": "Code",
+                "zh": "程式碼"
+              },
+              "url": "https://github.com/mfx-inria/anisotropic_appearance_fabrication"
+            }
+          ]
+        },
+        "images": [
+          {
+            "src": "assets/picks/aniso-infill/cover.jpg",
+            "alt": {
+              "en": "Four flat 3D prints in gold and blue glossy filament, a bunny, a monkey head with a QR code, a teapot and a dragon, with shading created by line direction",
+              "zh": "四件金色與藍色亮面線材的平面列印：兔子、猴子頭（旁邊有 QR code）、茶壺和龍，明暗由線條方向形成"
+            }
+          }
+        ],
+        "thumb": "assets/picks/aniso-infill/thumb.jpg",
+        "credit": {
+          "en": "Image: Chermain et al. 2023, from the official repository",
+          "zh": "圖片：Chermain et al. 2023，取自官方程式庫"
+        },
+        "categories": [
+          "hardware"
+        ],
+        "state": "want",
+        "added": "2026-11-21"
+      },
+      {
         "slug": "discimagestudio",
         "name": "DiscImageStudio",
         "by": "JiaFeiMiao-K-Cat",
@@ -668,9 +749,44 @@
         "readme": {
           "en": "https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio/blob/main/README.en.md",
           "zh": "https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio/blob/main/README.zh-TW.md"
+        },
+        "how": [
+          {
+            "en": "Download the release for your system from GitHub Releases: an .exe for Windows, an experimental command-line build for Linux and macOS.",
+            "zh": "到 GitHub Releases 下載對應系統的版本：Windows 是 .exe，Linux 和 macOS 是實驗性的命令列版本。"
+          },
+          {
+            "en": "Create a project for CD, DVD or Blu-ray, import an image, and adjust dithering, gamma and brightness.",
+            "zh": "新增工程並選 CD、DVD 或藍光，匯入圖片，再調整抖動、伽馬和亮度。"
+          },
+          {
+            "en": "Export an ISO (DVD), WAV + CUE (CD) or a Blu-ray image and burn it with ImgBurn or cdrecord. The author advises using discs you can afford to waste.",
+            "zh": "匯出 ISO（DVD）、WAV + CUE（CD）或藍光映像，用 ImgBurn 或 cdrecord 燒錄。作者建議先用可以報廢的空白片測試。"
+          }
+        ],
+        "cite": {
+          "text": "JiaFeiMiao-K-Cat. DiscImageStudio. Open-source software, GPL-3.0-or-later.",
+          "links": [
+            {
+              "label": "GitHub",
+              "url": "https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio"
+            }
+          ]
+        },
+        "credit": {
+          "en": "Image: DiscImageStudio repository",
+          "zh": "圖片：DiscImageStudio 專案"
         }
       }
-    ]
+    ],
+    "how_label": {
+      "en": "How to use it",
+      "zh": "怎麼用"
+    },
+    "cite_label": {
+      "en": "Source",
+      "zh": "出處"
+    }
   },
   "experience": {
     "heading": {

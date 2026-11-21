@@ -16,9 +16,9 @@
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="../../assets/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../assets/style.css?v=3a54348a">
+<link rel="stylesheet" href="../../assets/style.css?v=7c6e9ffe">
 </head>
-<body data-search="../../assets/search-zh.json?v=3a54348a" data-root="../../">
+<body data-search="../../assets/search-zh.json?v=7c6e9ffe" data-root="../../">
 <a class="skip" href="#main">跳到主要內容</a>
 
 <header class="nav">
@@ -39,16 +39,33 @@
     <h1>嚴選</h1>
     <p class="lede">我在網路上看到、挑出來的有趣專案。這些都不是我做的，每一項都標明作者並連到原專案。親手玩過之後，我會補上照片或影片、心得和踩到的雷。</p>
     <ul class="picks">
+      <li class="pick" id="aniso-infill" data-topics="hardware">
+        <figure class="shots"><img src="../../assets/picks/aniso-infill/cover.jpg" alt="四件金色與藍色亮面線材的平面列印：兔子、猴子頭（旁邊有 QR code）、茶壺和龍，明暗由線條方向形成" loading="lazy" decoding="async"><figcaption>圖片：Chermain et al. 2023，取自官方程式庫</figcaption></figure>
+        <h3><a href="https://xavierchermain.github.io/fdm_aa/" target="_blank" rel="noopener">用一般 3D 印表機印出拉絲金屬光澤</a> <span class="by">作者 Chermain et al., SIGGRAPH 2023</span></h3>
+        <p>一個研究方法：用一般的 FDM 3D 印表機和亮面線材，印出像拉絲金屬那樣、轉個角度反光就會移動的表面。原理是擠出線的走向會讓表面在某個方向上比較粗糙，光的反射方向就跟著改變。論文提出一個演算法，用一條連續、封閉的路徑填滿形狀，並讓每一處的線條都朝你指定的方向走。</p>
+        <h4>怎麼用</h4>
+        <ol class="how"><li>準備輸入：形狀的 SVG 外框，加一張灰階 PNG 表示每一處的線條方向（亮度對應 −90° 到 90°）。可以再加一張 PNG，替每個區域選擇模式：沿著邊界、垂直邊界、最平滑，或照指定方向。</li><li>用官方程式（Python + JAX，CPU 或 GPU 都能跑）產生路徑，輸出 SVG 和 G-code。作者表示重現論文圖 1 約需 4 分鐘，全部結果約 35 分鐘。</li><li>用亮面（絲綢或高光澤）PLA 印一層平板。附的 G-code 是針對改裝過的 Creality CR-10S Pro；作者使用 0.9 的擠出倍率，並建議用直接驅動擠出機。</li></ol>
+        <a class="repo" href="https://xavierchermain.github.io/fdm_aa/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span class="repo-name">mfx-inria/anisotropic_appearance_fabrication</span>
+          <span class="repo-facts">★ 40 · Python · BSD-3-Clause</span>
+        </a>
+        <div class="cite"><h4>出處</h4><p>Xavier Chermain, Cédric Zanni, Jonàs Martínez, Pierre-Alexandre Hugron, Sylvain Lefebvre. 2023. Orientable Dense Cyclic Infill for Anisotropic Appearance Fabrication. ACM Transactions on Graphics 42(4), Article 68 (SIGGRAPH 2023). <a href="https://doi.org/10.1145/3592412" target="_blank" rel="noopener">doi:10.1145/3592412</a></p><p class="cite-links"><a href="https://xavierchermain.github.io/data/pdf/Chermain2023Orientable.pdf" target="_blank" rel="noopener">論文 PDF</a> · <a href="https://xavierchermain.github.io/fdm_aa/" target="_blank" rel="noopener">專案頁</a> · <a href="https://youtu.be/aUDzZrlRnNU" target="_blank" rel="noopener">影片</a> · <a href="https://github.com/mfx-inria/anisotropic_appearance_fabrication" target="_blank" rel="noopener">程式碼</a></p></div>
+        <p class="meta">硬體 · 待體驗 · 2026-11-21</p>
+      </li>
       <li class="pick" id="discimagestudio" data-topics="hardware">
-        <figure class="shots"><img src="../../assets/picks/discimagestudio/cover.jpg" alt="一張燒錄後的 DVD-R，盤面上看得到許多小卡通圖案" loading="lazy" decoding="async"><figcaption>圖片來自原專案</figcaption></figure>
+        <figure class="shots"><img src="../../assets/picks/discimagestudio/cover.jpg" alt="一張燒錄後的 DVD-R，盤面上看得到許多小卡通圖案" loading="lazy" decoding="async"><figcaption>圖片：DiscImageStudio 專案</figcaption></figure>
         <h3><a href="https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio/blob/main/README.zh-TW.md" target="_blank" rel="noopener">DiscImageStudio</a> <span class="by">作者 JiaFeiMiao-K-Cat</span></h3>
         <p>把圖片轉成光碟資料，燒錄後在 CD、DVD 或單層藍光的盤面上就看得到圖案。</p>
         <p class="note"><strong>我想玩的</strong>光碟本身也是一片繞射光柵。我想用雷射照燒出來的圖案，看它會投影出什麼；再反過來試試，從想看到的影像做傅立葉轉換，設計出要燒的圖案。</p>
+        <h4>怎麼用</h4>
+        <ol class="how"><li>到 GitHub Releases 下載對應系統的版本：Windows 是 .exe，Linux 和 macOS 是實驗性的命令列版本。</li><li>新增工程並選 CD、DVD 或藍光，匯入圖片，再調整抖動、伽馬和亮度。</li><li>匯出 ISO（DVD）、WAV + CUE（CD）或藍光映像，用 ImgBurn 或 cdrecord 燒錄。作者建議先用可以報廢的空白片測試。</li></ol>
         <a class="repo" href="https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio/blob/main/README.zh-TW.md" target="_blank" rel="noopener">
           <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           <span class="repo-name">JiaFeiMiao-K-Cat/DiscImageStudio</span>
           <span class="repo-facts">★ 10.4k · C# · GPL-3.0</span>
         </a>
+        <div class="cite"><h4>出處</h4><p>JiaFeiMiao-K-Cat. DiscImageStudio. Open-source software, GPL-3.0-or-later.</p><p class="cite-links"><a href="https://github.com/JiaFeiMiao-K-Cat/DiscImageStudio" target="_blank" rel="noopener">GitHub</a></p></div>
         <p class="meta">硬體 · 待體驗 · 2026-11-21</p>
       </li>
     </ul>
@@ -61,6 +78,6 @@
   <input type="search" placeholder="搜尋作品、論文、文章" aria-label="搜尋" autocomplete="off">
   <ul class="results" data-empty="找不到結果"></ul>
 </dialog>
-<script src="../../assets/main.js?v=3a54348a" defer></script>
+<script src="../../assets/main.js?v=7c6e9ffe" defer></script>
 </body>
 </html>
